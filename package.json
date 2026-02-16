@@ -1,0 +1,16 @@
+{
+  "name": "asw-docs",
+  "version": "0.1.0",
+  "description": "Documentation for ASW, a C++ wrapper for SDL3 for making games.",
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^2.0.0-alpha.16",
+    "vue": "^3.5.28"
+  },
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  }
+}
