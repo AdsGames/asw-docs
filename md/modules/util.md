@@ -7,35 +7,26 @@ General utility functions.
 
 ## Functions
 
-### `abortOnError`
+### `abort_on_error`
 
 ```cpp
-void abortOnError(const std::string& message);
+[[noreturn]] void abort_on_error(const std::string& message);
 ```
 
 Abort the program and display an error message.
 
-### `makeColor`
+### `get_texture_size`
 
 ```cpp
-asw::Color makeColor(int r, int g, int b);
-asw::Color makeColor(int r, int g, int b, int a);
-```
-
-Create a color from RGB or RGBA values (0-255 each).
-
-### `getTextureSize`
-
-```cpp
-asw::Vec2<float> getTextureSize(const asw::Texture& tex);
+asw::Vec2<float> get_texture_size(const asw::Texture& tex);
 ```
 
 Get the width and height of a texture as a `Vec2<float>`.
 
-### `getTextSize`
+### `get_text_size`
 
 ```cpp
-asw::Vec2<int> getTextSize(const asw::Font& font, const std::string& text);
+asw::Vec2<int> get_text_size(const asw::Font& font, const std::string& text);
 ```
 
 Get the rendered size of a string with the given font.
@@ -60,18 +51,14 @@ Works with any type that supports `+`, `-`, and `*` with a float (e.g., `float`,
 ## Example
 
 ```cpp
-// Create colors
-asw::Color red = asw::util::makeColor(255, 0, 0);
-asw::Color semiTransparent = asw::util::makeColor(255, 255, 255, 128);
-
 // Get texture dimensions
-auto size = asw::util::getTextureSize(texture);
+auto size = asw::util::get_texture_size(texture);
 float width = size.x;
 float height = size.y;
 
 // Smooth interpolation
-float smoothed = asw::util::lerp(currentValue, targetValue, 0.1f);
+float smoothed = asw::util::lerp(current_value, target_value, 0.1f);
 
 // Interpolate positions
-asw::Vec2<float> pos = asw::util::lerp(startPos, endPos, progress);
+asw::Vec2<float> pos = asw::util::lerp(start_pos, end_pos, progress);
 ```

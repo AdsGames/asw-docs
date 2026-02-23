@@ -11,46 +11,46 @@ Keyboard, mouse, and game controller input handling.
 
 The `asw::input::Key` enum maps to SDL scancodes. Common keys include:
 
-| Key                                               | Description   |
-| ------------------------------------------------- | ------------- |
-| `Key::A` - `Key::Z`                               | Letter keys   |
-| `Key::Num0` - `Key::Num9`                         | Number keys   |
-| `Key::F1` - `Key::F24`                            | Function keys |
-| `Key::Return`                                     | Enter key     |
-| `Key::Escape`                                     | Escape key    |
-| `Key::Space`                                      | Spacebar      |
-| `Key::Up`, `Key::Down`, `Key::Left`, `Key::Right` | Arrow keys    |
-| `Key::LShift`, `Key::RShift`                      | Shift keys    |
-| `Key::LCtrl`, `Key::RCtrl`                        | Control keys  |
-| `Key::LAlt`, `Key::RAlt`                          | Alt keys      |
-| `Key::Tab`                                        | Tab key       |
-| `Key::Backspace`                                  | Backspace key |
+| Key | Description |
+|-----|-------------|
+| `Key::A` - `Key::Z` | Letter keys |
+| `Key::Num0` - `Key::Num9` | Number keys |
+| `Key::F1` - `Key::F24` | Function keys |
+| `Key::Return` | Enter key |
+| `Key::Escape` | Escape key |
+| `Key::Space` | Spacebar |
+| `Key::Up`, `Key::Down`, `Key::Left`, `Key::Right` | Arrow keys |
+| `Key::LShift`, `Key::RShift` | Shift keys |
+| `Key::LCtrl`, `Key::RCtrl` | Control keys |
+| `Key::LAlt`, `Key::RAlt` | Alt keys |
+| `Key::Tab` | Tab key |
+| `Key::Backspace` | Backspace key |
 
 ### Keyboard Functions
 
-#### `getKey`
+#### `get_key`
 
 ```cpp
-bool getKey(asw::input::Key key);
+bool get_key(asw::input::Key key);
 ```
 
 Check if a key is currently held down.
 
-#### `getKeyDown`
+#### `get_key_down`
 
 ```cpp
-bool getKeyDown(asw::input::Key key);
+bool get_key_down(asw::input::Key key);
 ```
 
-Check if a key was pressed since the last update (single-tick).
+Check if a key was pressed since the last update (single-frame).
 
-#### `getKeyUp`
+#### `get_key_up`
 
 ```cpp
-bool getKeyUp(asw::input::Key key);
+bool get_key_up(asw::input::Key key);
 ```
 
-Check if a key was released since the last update (single-tick).
+Check if a key was released since the last update (single-frame).
 
 ### KeyState
 
@@ -58,42 +58,58 @@ Check if a key was released since the last update (single-tick).
 extern KeyState keyboard;
 ```
 
-The global keyboard state. Holds arrays for `pressed`, `released`, and `down` states, plus `anyPressed` and `lastPressed`.
+The global keyboard state. Fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `pressed` | `std::array<bool, NUM_KEYS>` | Keys pressed this frame |
+| `released` | `std::array<bool, NUM_KEYS>` | Keys released this frame |
+| `down` | `std::array<bool, NUM_KEYS>` | Keys currently held |
+| `any_pressed` | `bool` | Whether any key is pressed |
+| `last_pressed` | `int` | Last pressed key index |
+
+### Text Input
+
+```cpp
+extern std::string text_input;
+```
+
+Contains the text input received during the current frame. Useful for text fields and chat input.
 
 ## Mouse
 
 ### MouseButton Enum
 
-| Value                 | Description         |
-| --------------------- | ------------------- |
-| `MouseButton::Left`   | Left mouse button   |
+| Value | Description |
+|-------|-------------|
+| `MouseButton::Left` | Left mouse button |
 | `MouseButton::Middle` | Middle mouse button |
-| `MouseButton::Right`  | Right mouse button  |
-| `MouseButton::X1`     | Extra button 1      |
-| `MouseButton::X2`     | Extra button 2      |
+| `MouseButton::Right` | Right mouse button |
+| `MouseButton::X1` | Extra button 1 |
+| `MouseButton::X2` | Extra button 2 |
 
 ### Mouse Functions
 
-#### `getMouseButton`
+#### `get_mouse_button`
 
 ```cpp
-bool getMouseButton(asw::input::MouseButton button);
+bool get_mouse_button(asw::input::MouseButton button);
 ```
 
 Check if a mouse button is currently held down.
 
-#### `getMouseButtonDown`
+#### `get_mouse_button_down`
 
 ```cpp
-bool getMouseButtonDown(asw::input::MouseButton button);
+bool get_mouse_button_down(asw::input::MouseButton button);
 ```
 
 Check if a mouse button was pressed since the last update.
 
-#### `getMouseButtonUp`
+#### `get_mouse_button_up`
 
 ```cpp
-bool getMouseButtonUp(asw::input::MouseButton button);
+bool get_mouse_button_up(asw::input::MouseButton button);
 ```
 
 Check if a mouse button was released since the last update.
@@ -106,21 +122,20 @@ extern MouseState mouse;
 
 The global mouse state struct:
 
-| Field         | Type          | Description                   |
-| ------------- | ------------- | ----------------------------- |
-| `position`    | `Vec2<float>` | Current mouse position        |
-| `z`           | `float`       | Scroll wheel value            |
-| `xChange`     | `float`       | Horizontal movement delta     |
-| `yChange`     | `float`       | Vertical movement delta       |
-| `anyPressed`  | `bool`        | Whether any button is pressed |
-| `lastPressed` | `int`         | Last pressed button index     |
+| Field | Type | Description |
+|-------|------|-------------|
+| `position` | `Vec2<float>` | Current mouse position |
+| `change` | `Vec2<float>` | Movement delta since last frame |
+| `z` | `float` | Scroll wheel value |
+| `any_pressed` | `bool` | Whether any button is pressed |
+| `last_pressed` | `int` | Last pressed button index |
 
 ### Cursor
 
-#### `setCursor`
+#### `set_cursor`
 
 ```cpp
-void setCursor(asw::input::CursorId cursor);
+void set_cursor(asw::input::CursorId cursor);
 ```
 
 Change the system cursor. Available cursors include `CursorId::Default`, `CursorId::Text`, `CursorId::Wait`, `CursorId::Crosshair`, `CursorId::Pointer`, and various resize cursors.
@@ -131,86 +146,86 @@ Supports up to 8 game controllers simultaneously.
 
 ### ControllerButton Enum
 
-| Value                                      | Description        |
-| ------------------------------------------ | ------------------ |
-| `ControllerButton::A`                      | South face button  |
-| `ControllerButton::B`                      | East face button   |
-| `ControllerButton::X`                      | West face button   |
-| `ControllerButton::Y`                      | North face button  |
-| `ControllerButton::Back`                   | Back/Select button |
-| `ControllerButton::Start`                  | Start button       |
-| `ControllerButton::Guide`                  | Guide/Home button  |
-| `ControllerButton::LeftStick`              | Left stick press   |
-| `ControllerButton::RightStick`             | Right stick press  |
-| `ControllerButton::LeftShoulder`           | Left bumper        |
-| `ControllerButton::RightShoulder`          | Right bumper       |
-| `ControllerButton::DPadUp/Down/Left/Right` | D-pad directions   |
+| Value | Description |
+|-------|-------------|
+| `ControllerButton::A` | South face button |
+| `ControllerButton::B` | East face button |
+| `ControllerButton::X` | West face button |
+| `ControllerButton::Y` | North face button |
+| `ControllerButton::Back` | Back/Select button |
+| `ControllerButton::Start` | Start button |
+| `ControllerButton::Guide` | Guide/Home button |
+| `ControllerButton::LeftStick` | Left stick press |
+| `ControllerButton::RightStick` | Right stick press |
+| `ControllerButton::LeftShoulder` | Left bumper |
+| `ControllerButton::RightShoulder` | Right bumper |
+| `ControllerButton::DPadUp/Down/Left/Right` | D-pad directions |
 
 ### ControllerAxis Enum
 
-| Value                          | Description        |
-| ------------------------------ | ------------------ |
-| `ControllerAxis::LeftX`        | Left stick X axis  |
-| `ControllerAxis::LeftY`        | Left stick Y axis  |
-| `ControllerAxis::RightX`       | Right stick X axis |
-| `ControllerAxis::RightY`       | Right stick Y axis |
-| `ControllerAxis::LeftTrigger`  | Left trigger       |
-| `ControllerAxis::RightTrigger` | Right trigger      |
+| Value | Description |
+|-------|-------------|
+| `ControllerAxis::LeftX` | Left stick X axis |
+| `ControllerAxis::LeftY` | Left stick Y axis |
+| `ControllerAxis::RightX` | Right stick X axis |
+| `ControllerAxis::RightY` | Right stick Y axis |
+| `ControllerAxis::LeftTrigger` | Left trigger |
+| `ControllerAxis::RightTrigger` | Right trigger |
 
 ### Controller Functions
 
-#### `getControllerButton`
+#### `get_controller_button`
 
 ```cpp
-bool getControllerButton(int index, asw::input::ControllerButton button);
+bool get_controller_button(uint32_t index, asw::input::ControllerButton button);
 ```
 
 Check if a controller button is currently held down.
 
-#### `getControllerButtonDown`
+#### `get_controller_button_down`
 
 ```cpp
-bool getControllerButtonDown(int index, asw::input::ControllerButton button);
+bool get_controller_button_down(uint32_t index, asw::input::ControllerButton button);
 ```
 
 Check if a controller button was pressed since the last update.
 
-#### `getControllerButtonUp`
+#### `get_controller_button_up`
 
 ```cpp
-bool getControllerButtonUp(int index, asw::input::ControllerButton button);
+bool get_controller_button_up(uint32_t index, asw::input::ControllerButton button);
 ```
 
 Check if a controller button was released since the last update.
 
-#### `getControllerAxis`
+#### `get_controller_axis`
 
 ```cpp
-float getControllerAxis(int index, asw::input::ControllerAxis axis);
+float get_controller_axis(uint32_t index, asw::input::ControllerAxis axis);
 ```
 
 Get the value of a controller axis (between `-1.0f` and `1.0f`).
 
-#### `setControllerDeadZone`
+#### `set_controller_dead_zone`
 
 ```cpp
-void setControllerDeadZone(int index, float deadZone);
+void set_controller_dead_zone(uint32_t index, float dead_zone);
 ```
 
 Set the joystick deadzone for a controller (default: `0.25f`).
 
-#### `getControllerCount`
+#### `get_controller_count`
 
 ```cpp
-int getControllerCount();
+int get_controller_count();
 ```
 
 Get the number of connected controllers.
 
-#### `getControllerName`
+#### `get_controller_name`
 
 ```cpp
-std::string getControllerName(int index);
+std::string get_controller_name(uint32_t index);
 ```
 
 Get the name of a controller.
@@ -219,23 +234,28 @@ Get the name of a controller.
 
 ```cpp
 // Keyboard
-if (asw::input::getKeyDown(asw::input::Key::Space)) {
+if (asw::input::get_key_down(asw::input::Key::Space)) {
   // jump
 }
 
-if (asw::input::getKey(asw::input::Key::A)) {
+if (asw::input::get_key(asw::input::Key::A)) {
   // move left while held
 }
 
 // Mouse
-if (asw::input::getMouseButtonDown(asw::input::MouseButton::Left)) {
+if (asw::input::get_mouse_button_down(asw::input::MouseButton::Left)) {
   auto pos = asw::input::mouse.position;
   // handle click at pos
 }
 
 // Controller
-float moveX = asw::input::getControllerAxis(0, asw::input::ControllerAxis::LeftX);
-if (asw::input::getControllerButtonDown(0, asw::input::ControllerButton::A)) {
+float move_x = asw::input::get_controller_axis(0, asw::input::ControllerAxis::LeftX);
+if (asw::input::get_controller_button_down(0, asw::input::ControllerButton::A)) {
   // jump
+}
+
+// Text input
+if (!asw::input::text_input.empty()) {
+  // handle typed text
 }
 ```

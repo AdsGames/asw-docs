@@ -30,6 +30,7 @@ export default defineConfig({
         items: [
           { text: "Core", link: "/modules/core" },
           { text: "Types", link: "/modules/types" },
+          { text: "Color", link: "/modules/color" },
           { text: "Display", link: "/modules/display" },
         ],
       },
@@ -51,10 +52,7 @@ export default defineConfig({
       },
       {
         text: "Assets",
-        items: [
-          { text: "Assets", link: "/modules/assets" },
-          { text: "Asset Manager", link: "/modules/asset-manager" },
-        ],
+        items: [{ text: "Assets", link: "/modules/assets" }],
       },
       {
         text: "Game Framework",
@@ -64,13 +62,16 @@ export default defineConfig({
         ],
       },
       {
+        text: "UI",
+        items: [{ text: "UI Widgets", link: "/modules/ui" }],
+      },
+      {
         text: "Utilities",
         items: [
           { text: "Geometry", link: "/modules/geometry" },
           { text: "Random", link: "/modules/random" },
           { text: "Log", link: "/modules/log" },
           { text: "Util", link: "/modules/util" },
-          { text: "Timer", link: "/modules/timer" },
         ],
       },
     ],

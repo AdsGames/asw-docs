@@ -14,8 +14,8 @@ class Physics {
 public:
   asw::Vec2<float> velocity;
   asw::Vec2<float> acceleration;
-  float angularVelocity{0};
-  float angularAcceleration{0};
+  float angular_velocity{0};
+  float angular_acceleration{0};
 };
 ```
 
@@ -32,8 +32,8 @@ class GameObject;
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `transform` | `asw::Quad<float>` | | Position and size |
-| `rotation` | `float` | `0` | Rotation in degrees |
-| `zIndex` | `int` | `0` | Draw order (higher = on top) |
+| `rotation` | `float` | `0` | Rotation in radians |
+| `z_index` | `int` | `0` | Draw order (higher = on top) |
 | `active` | `bool` | `true` | Whether to update and draw |
 | `alpha` | `float` | `1.0` | Opacity (0.0 - 1.0) |
 | `body` | `Physics` | | Physics component |
@@ -44,10 +44,10 @@ class GameObject;
 #### `update`
 
 ```cpp
-virtual void update(float deltaTime);
+virtual void update(float dt);
 ```
 
-Updates physics: applies acceleration to velocity, velocity to position, and angular acceleration/velocity to rotation. Override to add custom behavior (call `GameObject::update(deltaTime)` to keep the physics).
+Updates physics: applies acceleration to velocity, velocity to position, and angular acceleration/velocity to rotation. Override to add custom behavior (call `GameObject::update(dt)` to keep the physics).
 
 #### `draw`
 
@@ -57,10 +57,10 @@ virtual void draw();
 
 Override to render the object.
 
-#### `getTransform`
+#### `get_transform`
 
 ```cpp
-const asw::Quad<float>& getTransform() const;
+const asw::Quad<float>& get_transform() const;
 ```
 
 Returns a const reference to the transform.
@@ -75,13 +75,13 @@ class Sprite : public GameObject;
 
 ### Methods
 
-#### `setTexture`
+#### `set_texture`
 
 ```cpp
-void setTexture(const asw::Texture& texture, bool autoSize = true);
+void set_texture(const asw::Texture& texture, bool auto_size = true);
 ```
 
-Set the sprite's texture. When `autoSize` is `true`, the transform size is automatically set to the texture dimensions.
+Set the sprite's texture. When `auto_size` is `true`, the transform size is automatically set to the texture dimensions.
 
 Rendering automatically handles alpha and rotation.
 
@@ -95,57 +95,66 @@ class Text : public GameObject;
 
 ### Methods
 
-#### `setFont`
+#### `set_font`
 
 ```cpp
-void setFont(const asw::Font& font);
+void set_font(const asw::Font& font);
 ```
 
 Set the font to use for rendering.
 
-#### `setText`
+#### `set_text`
 
 ```cpp
-void setText(const std::string& text);
+void set_text(const std::string_view& text);
 ```
 
 Set the text content.
 
-#### `setColor`
+#### `set_color`
 
 ```cpp
-void setColor(const asw::Color& color);
+void set_color(const asw::Color& color);
 ```
 
 Set the text color.
+
+#### `set_justify`
+
+```cpp
+void set_justify(asw::TextJustify justify);
+```
+
+Set the text justification (`Left`, `Center`, or `Right`).
 
 ## Example
 
 ```cpp
 // Create a sprite
 auto player = std::make_shared<asw::game::Sprite>();
-player->setTexture(asw::assets::loadTexture("player.png"));
+player->set_texture(asw::assets::load_texture("player.png"));
 player->transform.position = {100.0f, 200.0f};
 player->body.velocity = {50.0f, 0.0f};
-player->zIndex = 1;
+player->z_index = 1;
 
 // Create text
 auto label = std::make_shared<asw::game::Text>();
-label->setFont(asw::assets::loadFont("font.ttf", 16));
-label->setText("Score: 0");
-label->setColor({255, 255, 255, 255});
+label->set_font(asw::assets::load_font("font.ttf", 16));
+label->set_text("Score: 0");
+label->set_color(asw::color::white);
+label->set_justify(asw::TextJustify::Center);
 label->transform.position = {10.0f, 10.0f};
 
 // Custom game object
 class Enemy : public asw::game::GameObject {
 public:
-  void update(float deltaTime) override {
-    GameObject::update(deltaTime);
+  void update(float dt) override {
+    GameObject::update(dt);
     // custom AI logic
   }
 
   void draw() override {
-    asw::draw::circleFill(transform.position, 16.0f, {255, 0, 0, 255});
+    asw::draw::circle_fill(transform.position, 16.0f, asw::color::red);
   }
 };
 ```

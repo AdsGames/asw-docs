@@ -41,7 +41,7 @@ Vec2(T x, T y);
 
 ### Operators
 
-`+`, `-`, `*`, `/`, `+=`, `-=`, `*=`, `/=`, `==`, `!=`
+`+`, `-`, `*`, `/`, `+=`, `-=`, `*=`, `/=`, `==`
 
 Arithmetic operators work with other `Vec2` instances or scalar values.
 
@@ -81,7 +81,7 @@ Vec3(T x, T y, T z);
 
 ### Operators
 
-`+`, `-`, `*`, `/`, `+=`, `-=`, `*=`, `/=`, `==`, `!=`
+`+`, `-`, `*`, `/`, `+=`, `-=`, `*=`, `/=`, `==`
 
 ## Quad
 
@@ -111,16 +111,16 @@ Quad(T x, T y, T width, T height);
 
 | Method | Return | Description |
 |--------|--------|-------------|
-| `setPosition(T x, T y)` | `void` | Set the position |
-| `setSize(T width, T height)` | `void` | Set the size |
-| `getCenter()` | `Vec2<T>` | Get the center point |
+| `set_position(T x, T y)` | `void` | Set the position |
+| `set_size(T width, T height)` | `void` | Set the size |
+| `get_center()` | `Vec2<T>` | Get the center point |
 | `contains(const Vec2<T>& point)` | `bool` | Point-in-rect test |
 | `contains(T x, T y)` | `bool` | Point-in-rect test |
 | `collides(const Quad& other)` | `bool` | AABB collision test |
-| `collidesTop(const Quad& other)` | `bool` | Top-edge collision |
-| `collidesBottom(const Quad& other)` | `bool` | Bottom-edge collision |
-| `collidesLeft(const Quad& other)` | `bool` | Left-edge collision |
-| `collidesRight(const Quad& other)` | `bool` | Right-edge collision |
+| `collides_top(const Quad& other)` | `bool` | Top-edge collision |
+| `collides_bottom(const Quad& other)` | `bool` | Bottom-edge collision |
+| `collides_left(const Quad& other)` | `bool` | Left-edge collision |
+| `collides_right(const Quad& other)` | `bool` | Right-edge collision |
 
 ### Operators
 
@@ -131,7 +131,7 @@ Quad(T x, T y, T width, T height);
 ```cpp
 asw::Vec2<float> pos(100.0f, 200.0f);
 asw::Vec2<float> vel(1.0f, 0.0f);
-pos += vel * deltaTime;
+pos += vel * delta_time;
 
 asw::Quad<float> player(100, 200, 32, 32);
 asw::Quad<float> enemy(150, 210, 32, 32);

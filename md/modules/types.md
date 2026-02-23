@@ -15,7 +15,6 @@ Core type aliases used throughout the ASW library.
 | `asw::Music` | `std::shared_ptr<Mix_Music>` | A shared pointer to music |
 | `asw::Renderer` | `SDL_Renderer` | Alias for the SDL renderer |
 | `asw::Window` | `SDL_Window` | Alias for the SDL window |
-| `asw::Color` | `SDL_Color` | Alias for an RGBA color |
 
 All asset types (`Texture`, `Font`, `Sample`, `Music`) use `shared_ptr` for automatic memory management.
 
@@ -23,29 +22,41 @@ All asset types (`Texture`, `Font`, `Sample`, `Music`) use `shared_ptr` for auto
 
 ```cpp
 enum class BlendMode {
-  NONE,
-  BLEND,
-  BLEND_PREMULTIPLIED,
-  ADD,
-  ADD_PREMULTIPLIED,
-  MODULATE,
-  MULTIPLY,
+  None,
+  Blend,
+  BlendPremultiplied,
+  Add,
+  AddPremultiplied,
+  Modulate,
+  Multiply,
 };
 ```
 
 | Value | Description |
 |-------|-------------|
-| `NONE` | No blending |
-| `BLEND` | Alpha blending |
-| `BLEND_PREMULTIPLIED` | Pre-multiplied alpha blending |
-| `ADD` | Additive blending |
-| `ADD_PREMULTIPLIED` | Pre-multiplied additive blending |
-| `MODULATE` | Color modulation |
-| `MULTIPLY` | Multiply blending |
+| `None` | No blending |
+| `Blend` | Alpha blending |
+| `BlendPremultiplied` | Pre-multiplied alpha blending |
+| `Add` | Additive blending |
+| `AddPremultiplied` | Pre-multiplied additive blending |
+| `Modulate` | Color modulation |
+| `Multiply` | Multiply blending |
+
+## TextJustify Enum
+
+```cpp
+enum class TextJustify {
+  Left,
+  Center,
+  Right,
+};
+```
+
+Used with `asw::draw::text()` and `asw::game::Text` to control text alignment.
 
 ## Example
 
 ```cpp
-asw::Color red = {255, 0, 0, 255};
-asw::Texture tex = asw::assets::loadTexture("image.png");
+asw::Color red(255, 0, 0);
+asw::Texture tex = asw::assets::load_texture("image.png");
 ```

@@ -25,95 +25,82 @@ The SDL window for the display module.
 
 ## Functions
 
-### `setTitle`
+### `set_title`
 
 ```cpp
-void setTitle(const std::string& title);
+void set_title(const std::string& title);
 ```
 
 Set the title of the window.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `title` | `const std::string&` | The title to display at the top of the window |
-
-### `setIcon`
+### `set_icon`
 
 ```cpp
-void setIcon(const std::string& path);
+void set_icon(const std::string& path);
 ```
 
 Set the icon to display on the window. Silently fails if the file does not exist.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `path` | `const std::string&` | Path to the icon file |
-
-### `setFullscreen`
+### `set_fullscreen`
 
 ```cpp
-void setFullscreen(bool fullscreen);
+void set_fullscreen(bool fullscreen);
 ```
 
 Set the window to fullscreen or windowed mode.
 
-### `setResolution`
+### `set_resolution`
 
 ```cpp
-void setResolution(int w, int h);
+void set_resolution(int w, int h);
 ```
 
 Set the resolution of the window.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `w` | `int` | Width of the window |
-| `h` | `int` | Height of the window |
-
-### `setResizable`
+### `set_resizable`
 
 ```cpp
-void setResizable(bool resizable);
+void set_resizable(bool resizable);
 ```
 
 Set whether the window is resizable.
 
-### `getSize`
+### `get_size`
 
 ```cpp
-SDL_Point getSize();
+asw::Vec2<int> get_size();
 ```
 
 Returns the actual size of the window.
 
-### `getLogicalSize`
+### `get_logical_size`
 
 ```cpp
-SDL_Point getLogicalSize();
+asw::Vec2<int> get_logical_size();
 ```
 
 Returns the logical size of the window. This may differ from the actual size if scaling is enabled.
 
-### `getScale`
+### `get_scale`
 
 ```cpp
-SDL_FPoint getScale();
+asw::Vec2<float> get_scale();
 ```
 
 Returns the scale of the window (logical size / actual size).
 
-### `setRenderTarget`
+### `set_render_target`
 
 ```cpp
-void setRenderTarget(const asw::Texture& texture);
+void set_render_target(const asw::Texture& texture);
 ```
 
 Set the render target to a texture.
 
-### `resetRenderTarget`
+### `reset_render_target`
 
 ```cpp
-void resetRenderTarget();
+void reset_render_target();
 ```
 
 Reset the render target back to the default (the window).
@@ -135,10 +122,10 @@ void present();
 
 Present the rendered frame to the window.
 
-### `setBlendMode`
+### `set_blend_mode`
 
 ```cpp
-void setBlendMode(asw::BlendMode mode);
+void set_blend_mode(asw::BlendMode mode);
 ```
 
 Set the blend mode of the renderer.
@@ -146,8 +133,8 @@ Set the blend mode of the renderer.
 ## Example
 
 ```cpp
-asw::display::setTitle("My Game");
-asw::display::setIcon("icon.png");
+asw::display::set_title("My Game");
+asw::display::set_icon("icon.png");
 
 // Game loop
 asw::display::clear();
