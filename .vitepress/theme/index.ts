@@ -2,6 +2,7 @@
 import { h } from "vue";
 import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
+import CopyOrDownloadAsMarkdownButtons from "vitepress-plugin-llms/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue";
 import "./style.css";
 
 export default {
@@ -12,6 +13,9 @@ export default {
     });
   },
   enhanceApp({ app, router, siteData }) {
-    // ...
+    app.component(
+      "CopyOrDownloadAsMarkdownButtons",
+      CopyOrDownloadAsMarkdownButtons,
+    );
   },
 } satisfies Theme;
