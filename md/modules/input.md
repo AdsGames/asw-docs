@@ -55,10 +55,10 @@ Check if a key was released since the last update (single-frame).
 ### KeyState
 
 ```cpp
-extern KeyState keyboard;
+const KeyState& get_keyboard();
 ```
 
-The global keyboard state. Fields:
+Get the current keyboard state. Fields:
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -71,10 +71,10 @@ The global keyboard state. Fields:
 ### Text Input
 
 ```cpp
-extern std::string text_input;
+const std::string& get_text_input();
 ```
 
-Contains the text input received during the current frame. Useful for text fields and chat input.
+Get the text input received during the current frame. Useful for text fields and chat input.
 
 ## Mouse
 
@@ -117,10 +117,10 @@ Check if a mouse button was released since the last update.
 ### MouseState
 
 ```cpp
-extern MouseState mouse;
+const MouseState& get_mouse();
 ```
 
-The global mouse state struct:
+Get the current mouse state. Fields:
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -230,6 +230,20 @@ std::string get_controller_name(uint32_t index);
 
 Get the name of a controller.
 
+## Actions
+
+To bind named actions to keys, mouse buttons and controller input, see [Actions](./action).
+
+## Reset
+
+### `reset`
+
+```cpp
+void reset();
+```
+
+Reset the per-frame input states. `asw::core::update()` calls this for you.
+
 ## Example
 
 ```cpp
@@ -244,7 +258,7 @@ if (asw::input::get_key(asw::input::Key::A)) {
 
 // Mouse
 if (asw::input::get_mouse_button_down(asw::input::MouseButton::Left)) {
-  auto pos = asw::input::mouse.position;
+  auto pos = asw::input::get_mouse().position;
   // handle click at pos
 }
 
@@ -255,7 +269,7 @@ if (asw::input::get_controller_button_down(0, asw::input::ControllerButton::A)) 
 }
 
 // Text input
-if (!asw::input::text_input.empty()) {
+if (!asw::input::get_text_input().empty()) {
   // handle typed text
 }
 ```

@@ -5,6 +5,26 @@ Functions for loading, caching, and managing textures, fonts, and audio.
 **Header:** `#include <asw/modules/assets.h>`
 **Namespace:** `asw::assets`
 
+## Paths
+
+### `get_path`
+
+```cpp
+std::string get_path(const std::string& filename);
+```
+
+Get the full path to an asset. Adds the base path of the application (the directory of the executable, or `Contents/Resources/` in a macOS app bundle) before `filename`. If the base path is not available, returns `filename` unchanged.
+
+All `load_*` functions use this function, so asset filenames are relative to the application base path, not to the working directory.
+
+### `get_save_path`
+
+```cpp
+std::string get_save_path(const std::string& org, const std::string& app);
+```
+
+Get a writable folder for save files and settings, unique to the organization and application. The folder is created if it does not exist. The path ends in a path separator. Returns an empty string if the path cannot be found.
+
 ## Textures
 
 ### `load_texture`
@@ -49,11 +69,16 @@ Create a blank texture with the given dimensions. Useful for render targets.
 ### `load_font`
 
 ```cpp
-asw::Font load_font(const std::string& filename, float size);
-asw::Font load_font(const std::string& filename, float size, const std::string& key);
+asw::Font load_font(const std::string& filename,
+                    float size,
+                    asw::FontStyle style = asw::FontStyle::Smooth);
+asw::Font load_font(const std::string& filename,
+                    float size,
+                    const std::string& key,
+                    asw::FontStyle style = asw::FontStyle::Smooth);
 ```
 
-Load a TTF font at the given size. The second overload caches the result under `key`.
+Load a TTF font at the given size. The second overload caches the result under `key`. Use `asw::FontStyle::Pixel` for pixel art fonts, and `asw::FontStyle::Smooth` for regular fonts. See [FontStyle](./types#fontstyle-enum).
 
 ::: warning
 Aborts the program if the file is not found.
@@ -156,6 +181,7 @@ auto texture = asw::assets::load_texture("sprites/player.png");
 // Load with caching
 asw::assets::load_texture("sprites/player.png", "player");
 asw::assets::load_font("fonts/arial.ttf", 24.0f, "main_font");
+asw::assets::load_font("fonts/pixel.ttf", 8.0f, "pixel_font", asw::FontStyle::Pixel);
 asw::assets::load_sample("sfx/jump.wav", "jump");
 asw::assets::load_music("music/theme.ogg", "bgm");
 
@@ -168,4 +194,7 @@ asw::assets::unload_texture("player");
 
 // Or clear everything
 asw::assets::clear_all();
+
+// Save files
+std::string save_file = asw::assets::get_save_path("A.D.S. Games", "My Game") + "save.dat";
 ```

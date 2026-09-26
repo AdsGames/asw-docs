@@ -5,6 +5,16 @@ Audio playback for sound effects and music.
 **Header:** `#include <asw/modules/sound.h>`
 **Namespace:** `asw::sound`
 
+## Mixer
+
+### `get_mixer`
+
+```cpp
+MIX_Mixer* get_mixer();
+```
+
+Get the SDL_mixer device. Returns `nullptr` if the sound module is not initialized. `asw::core::init()` initializes the sound module.
+
 ## Sound Effects
 
 ### `play`
@@ -22,7 +32,7 @@ Play a sound effect sample.
 |-----------|------|---------|-------------|
 | `sample` | `const asw::Sample&` | | The sample to play |
 | `volume` | `float` | `1.0` | Playback volume (0.0 - 1.0) |
-| `pan` | `float` | `0.0` | Panning: -1.0 (left) to 1.0 (right) |
+| `pan` | `float` | `0.0` | Panning: -1.0 (full left), 0.0 (center), 1.0 (full right) |
 | `loop` | `bool` | `false` | Infinite loop when `true` |
 
 ## Music
@@ -30,40 +40,24 @@ Play a sound effect sample.
 ### `play_music`
 
 ```cpp
-void play_music(const asw::Music& sample, float volume = 1.0F);
+void play_music(const asw::Music& sample, float volume = 1.0F, float fade_in_s = 0.0F);
 ```
 
 Play a music track.
 
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `sample` | `const asw::Music&` | | The music to play |
+| `volume` | `float` | `1.0` | Playback volume (0.0 - 1.0) |
+| `fade_in_s` | `float` | `0.0` | Fade-in duration in seconds |
+
 ### `stop_music`
 
 ```cpp
-void stop_music();
+void stop_music(float fade_out_s = 0.0F);
 ```
 
-Stop the currently playing music.
-
-### `fade_in_music`
-
-```cpp
-void fade_in_music(const asw::Music& music, float volume, float duration);
-```
-
-Fade in music over a duration.
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `music` | `const asw::Music&` | The music to play |
-| `volume` | `float` | Target volume (0.0 - 1.0) |
-| `duration` | `float` | Fade duration in seconds |
-
-### `fade_out_music`
-
-```cpp
-void fade_out_music(float duration);
-```
-
-Fade out the currently playing music over the given duration (in seconds).
+Stop the currently playing music. Set `fade_out_s` to fade out over that number of seconds.
 
 ### `pause_music`
 
@@ -157,7 +151,10 @@ auto bgm = asw::assets::load_music("theme.ogg");
 asw::sound::play(sfx, 0.8f);
 
 // Play music with fade in (2 seconds)
-asw::sound::fade_in_music(bgm, 0.5f, 2.0f);
+asw::sound::play_music(bgm, 0.5f, 2.0f);
+
+// Fade out music (1 second)
+asw::sound::stop_music(1.0f);
 
 // Volume controls
 asw::sound::set_master_volume(0.7f);

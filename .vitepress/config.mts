@@ -47,7 +47,10 @@ export default defineConfig({
       },
       {
         text: "Input",
-        items: [{ text: "Input", link: "/modules/input" }],
+        items: [
+          { text: "Input", link: "/modules/input" },
+          { text: "Actions", link: "/modules/action" },
+        ],
       },
       {
         text: "Audio",

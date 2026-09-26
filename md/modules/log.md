@@ -83,6 +83,17 @@ void error(std::format_string<Args...> format, Args&&... args);
 
 Log an error-level message. The template overload supports `std::format`-style formatting.
 
+### `progress`
+
+```cpp
+void progress(float progress, std::string message);
+
+template <typename... Args>
+void progress(float prog, std::format_string<Args...> format, Args&&... args);
+```
+
+Log a progress message with a progress bar and a percentage. `progress` is a value from `0.0` to `1.0`. The template overload supports `std::format`-style formatting.
+
 ## Example
 
 ```cpp
@@ -97,6 +108,9 @@ asw::log::error("Failed to load asset");
 asw::log::info("Player {} scored {} points", player_name, score);
 asw::log::debug("Position: ({}, {})", x, y);
 asw::log::error("Failed to load file: {}", filename);
+
+// Progress
+asw::log::progress(0.5f, "Loading assets ({}/{})", loaded, total);
 
 // Log to a file
 std::ofstream log_file("game.log");

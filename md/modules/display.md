@@ -5,25 +5,23 @@ Display and window management routines.
 **Header:** `#include <asw/modules/display.h>`
 **Namespace:** `asw::display`
 
-## Variables
-
-### `renderer`
-
-```cpp
-extern asw::Renderer* renderer;
-```
-
-The SDL renderer for the display module.
-
-### `window`
-
-```cpp
-extern asw::Window* window;
-```
-
-The SDL window for the display module.
-
 ## Functions
+
+### `get_renderer`
+
+```cpp
+asw::Renderer* get_renderer();
+```
+
+Get the SDL renderer. Returns `nullptr` if the display is not initialized, or if it was initialized with `init_opengl`.
+
+### `get_window`
+
+```cpp
+asw::Window* get_window();
+```
+
+Get the SDL window. Returns `nullptr` if the display is not initialized.
 
 ### `set_title`
 
@@ -129,6 +127,22 @@ void set_blend_mode(asw::BlendMode mode);
 ```
 
 Set the blend mode of the renderer.
+
+### `warp_mouse`
+
+```cpp
+void warp_mouse(float x, float y);
+```
+
+Move the mouse cursor to a position in the window.
+
+### `swap_window`
+
+```cpp
+void swap_window();
+```
+
+Swap the window buffers. Use this instead of `present()` when you initialize with `asw::core::init_opengl`.
 
 ## Example
 

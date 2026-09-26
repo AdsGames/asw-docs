@@ -77,7 +77,7 @@ void text(const asw::Font& font,
           asw::TextJustify justify = asw::TextJustify::Left);
 ```
 
-Draw text with the specified justification.
+Draw text with the specified justification. The position is rounded to whole pixels after justification, so glyphs stay sharp. Rendered text is cached.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -86,6 +86,14 @@ Draw text with the specified justification.
 | `position` | `const asw::Vec2<float>&` | | The position to draw at |
 | `color` | `asw::Color` | | The text color |
 | `justify` | `asw::TextJustify` | `Left` | Text alignment (`Left`, `Center`, `Right`) |
+
+### `clear_text_cache`
+
+```cpp
+void clear_text_cache();
+```
+
+Clear the cache of rendered text textures. The cache depends on the active renderer and fonts. `asw::core::shutdown()` clears it before SDL teardown.
 
 ## Primitive Drawing
 
@@ -165,6 +173,14 @@ void set_alpha(const asw::Texture& texture, float alpha);
 
 Set the alpha (opacity) of a texture.
 
+### `set_tint`
+
+```cpp
+void set_tint(const asw::Texture& texture, asw::Color tint);
+```
+
+Set the tint of a texture. Each color channel is multiplied by the tint when drawn. White draws the texture unchanged. The alpha of `tint` is ignored; use `set_alpha` for transparency.
+
 ## Example
 
 ```cpp
@@ -176,6 +192,9 @@ asw::draw::sprite(tex, {100.0f, 200.0f});
 
 // Draw rotated sprite (radians)
 asw::draw::rotate_sprite(tex, {100.0f, 200.0f}, 0.785f);
+
+// Tint a sprite red
+asw::draw::set_tint(tex, asw::color::red);
 
 // Draw primitives
 asw::draw::rect_fill({10, 10, 100, 50}, asw::color::red);

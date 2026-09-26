@@ -26,6 +26,16 @@ class Widget;
 
 ### Methods
 
+#### `is_hovered` / `is_pressed` / `is_focused`
+
+```cpp
+bool is_hovered() const;
+bool is_pressed() const;
+bool is_focused() const;
+```
+
+Get the interaction state of the widget: the pointer is over it, it is being pressed, or it holds focus. Subclasses can set the protected `_hovered`, `_pressed`, and `_focused` fields.
+
 #### `id`
 
 ```cpp
@@ -100,7 +110,6 @@ enum class Type {
 |-------|------|-------------|
 | `type` | `Type` | The event type |
 | `key` | `asw::input::Key` | Key associated with keyboard events |
-| `shift` | `bool` | Whether shift is held |
 | `pointer_id` | `int` | Pointer identifier |
 | `pointer_pos` | `asw::Vec2<float>` | Pointer position |
 | `mouse_button` | `asw::input::MouseButton` | Mouse button for pointer events |
@@ -182,6 +191,7 @@ class Root;
 | Method | Description |
 |--------|-------------|
 | `set_size(float w, float h)` | Set the size of the root panel |
+| `rebuild_focus_if_needed()` | Rebuild the focus list if the tree has changed |
 | `hit_test(Widget& w, const Vec2<float>& pos)` | Find the deepest widget at a position |
 | `dispatch_pointer(const UIEvent& e)` | Route a pointer event to the appropriate widget |
 | `dispatch_to_focused(const UIEvent& e)` | Dispatch an event to the focused widget |
@@ -242,8 +252,15 @@ class Button : public Widget;
 | Field | Type | Description |
 |-------|------|-------------|
 | `on_click` | `std::function<void()>` | Callback invoked on click |
+| `padding` | `float` | Padding inside the button on all sides (default: `0`) |
 | `font` | `asw::Font` | Font for the button text |
 | `text` | `std::string` | Button label text |
+| `texture` | `asw::Texture` | Texture to display on the button |
+
+| Method | Description |
+|--------|-------------|
+| `set_text(const std::string& t, bool auto_size = false)` | Set the text. If `auto_size` is `true`, resize the button to fit the text |
+| `set_texture(const asw::Texture& tex, bool auto_size = false)` | Set the texture. If `auto_size` is `true`, resize the button to the texture size |
 
 ### InputBox
 
@@ -300,7 +317,7 @@ input.on_change = [](const std::string& value) {
 };
 
 // In game loop
-while (!asw::core::exit) {
+while (!asw::core::is_exiting()) {
   asw::core::update();
   ui.update();
 

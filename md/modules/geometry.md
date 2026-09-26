@@ -41,9 +41,9 @@ Vec2(T x, T y);
 
 ### Operators
 
-`+`, `-`, `*`, `/`, `+=`, `-=`, `*=`, `/=`, `==`
+`+`, `-`, `*`, `/`, `%`, `+=`, `-=`, `*=`, `/=`, `%=`, `==`
 
-Arithmetic operators work with other `Vec2` instances or scalar values.
+Arithmetic operators work with other `Vec2` instances or scalar values. `%` and `%=` take a scalar only, and need an integral `T`.
 
 ## Vec3
 
@@ -81,7 +81,9 @@ Vec3(T x, T y, T z);
 
 ### Operators
 
-`+`, `-`, `*`, `/`, `+=`, `-=`, `*=`, `/=`, `==`
+`+`, `-`, `*`, `/`, `%`, `+=`, `-=`, `*=`, `/=`, `%=`, `==`
+
+`%` and `%=` take a scalar only, and need an integral `T`.
 
 ## Quad
 
@@ -126,6 +128,17 @@ Quad(T x, T y, T width, T height);
 
 `+`, `-`, `*`, `/` (with other `Quad` or scalar values)
 
+## Type Aliases
+
+| Alias | Type |
+|-------|------|
+| `asw::Vec2f` | `Vec2<float>` |
+| `asw::Vec2i` | `Vec2<int>` |
+| `asw::Vec3f` | `Vec3<float>` |
+| `asw::Vec3i` | `Vec3<int>` |
+| `asw::Quadf` | `Quad<float>` |
+| `asw::Quadi` | `Quad<int>` |
+
 ## Example
 
 ```cpp
@@ -140,7 +153,7 @@ if (player.collides(enemy)) {
   // handle collision
 }
 
-if (player.contains(asw::input::mouse.position)) {
+if (player.contains(asw::input::get_mouse().position)) {
   // mouse is over the player
 }
 ```

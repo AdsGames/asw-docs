@@ -130,7 +130,15 @@ Queue a transition to the given scene. The transition happens at the start of th
 void start();
 ```
 
-Start the managed main loop with a fixed timestep. Runs until `asw::core::exit` is `true`. Supports Emscripten.
+Start the managed main loop with a fixed timestep. Runs until `asw::core::is_exiting()` returns `true`, then calls `cleanup()`. Supports Emscripten.
+
+### `cleanup`
+
+```cpp
+void cleanup();
+```
+
+Clean up the active scene and remove all registered scenes. `start()` calls this when the loop ends.
 
 ### `update`
 
@@ -138,7 +146,7 @@ Start the managed main loop with a fixed timestep. Runs until `asw::core::exit` 
 void update(const float dt);
 ```
 
-Update the current scene. Call this if you want a custom loop instead of `start()`.
+Update the current scene. Call this if you want a custom loop instead of `start()`. Does nothing after `asw::core::exit()` is called.
 
 ### `draw`
 
@@ -146,7 +154,7 @@ Update the current scene. Call this if you want a custom loop instead of `start(
 void draw();
 ```
 
-Draw the current scene. Call this if you want a custom loop instead of `start()`.
+Draw the current scene. Call this if you want a custom loop instead of `start()`. Does nothing after `asw::core::exit()` is called.
 
 ### `set_timestep`
 

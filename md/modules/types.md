@@ -11,8 +11,8 @@ Core type aliases used throughout the ASW library.
 |------|-----------|-------------|
 | `asw::Texture` | `std::shared_ptr<SDL_Texture>` | A shared pointer to an SDL texture |
 | `asw::Font` | `std::shared_ptr<TTF_Font>` | A shared pointer to a TTF font |
-| `asw::Sample` | `std::shared_ptr<Mix_Chunk>` | A shared pointer to a sound effect |
-| `asw::Music` | `std::shared_ptr<Mix_Music>` | A shared pointer to music |
+| `asw::Sample` | `std::shared_ptr<MIX_Audio>` | A shared pointer to a sound effect |
+| `asw::Music` | `std::shared_ptr<MIX_Audio>` | A shared pointer to music |
 | `asw::Renderer` | `SDL_Renderer` | Alias for the SDL renderer |
 | `asw::Window` | `SDL_Window` | Alias for the SDL window |
 
@@ -21,7 +21,7 @@ All asset types (`Texture`, `Font`, `Sample`, `Music`) use `shared_ptr` for auto
 ## BlendMode Enum
 
 ```cpp
-enum class BlendMode {
+enum class BlendMode : SDL_BlendMode {
   None,
   Blend,
   BlendPremultiplied,
@@ -42,6 +42,8 @@ enum class BlendMode {
 | `Modulate` | Color modulation |
 | `Multiply` | Multiply blending |
 
+The underlying type of `BlendMode` is `SDL_BlendMode`, so you can cast between the two directly.
+
 ## TextJustify Enum
 
 ```cpp
@@ -53,6 +55,22 @@ enum class TextJustify {
 ```
 
 Used with `asw::draw::text()` and `asw::game::Text` to control text alignment.
+
+## FontStyle Enum
+
+```cpp
+enum class FontStyle {
+  Smooth,
+  Pixel,
+};
+```
+
+Sets how the glyphs of a font are rendered. Pass it to `asw::assets::load_font()`.
+
+| Value | Description |
+|-------|-------------|
+| `Smooth` | Anti-aliased glyphs with linear filtering, for regular fonts |
+| `Pixel` | Hard-edged glyphs with nearest filtering, for pixel art fonts |
 
 ## Example
 

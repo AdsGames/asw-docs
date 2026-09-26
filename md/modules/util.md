@@ -29,7 +29,15 @@ Get the width and height of a texture as a `Vec2<float>`.
 asw::Vec2<int> get_text_size(const asw::Font& font, const std::string& text);
 ```
 
-Get the rendered size of a string with the given font.
+Get the rendered size of a string with the given font. Results are cached.
+
+### `clear_text_size_cache`
+
+```cpp
+void clear_text_size_cache();
+```
+
+Clear the cached text sizes. Call this when you unload fonts.
 
 ### `lerp`
 
