@@ -46,7 +46,7 @@ void run(const std::function<void()>& frame);
 Run a main loop until `exit()` is called. `run` calls `frame` once per frame. In `frame`, call `update()`, run your game logic, draw, and call `asw::display::present()`.
 
 - **Desktop:** `run` is a plain loop. It returns after `exit()` is called, so you can call `shutdown()` after it.
-- **Browser (Emscripten):** the browser runs the loop with `emscripten_set_main_loop`. `run` does not return, and code after it does not run. When `exit()` is called, the loop stops and `Module.onStop` is called if the web page defines it. The ASW example pages use this to show a restart message.
+- **Browser (Emscripten):** the browser runs the loop with `emscripten_set_main_loop`. `run` does not return, and code after it does not run. When `exit()` is called, the loop stops and `Module.onStop` is called if the web page defines it. The page made by [`asw_add_web_target()`](../guide/getting-started#build-for-the-browser) uses this to show a restart message.
 
 Use `run` instead of a `while (!is_exiting())` loop, so that the same code works on desktop and in the browser. A `while` loop blocks the browser, so the page freezes. [`SceneManager::start()`](./scene#start) uses `run` in the browser too.
 

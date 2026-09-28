@@ -128,7 +128,7 @@ Get the current mouse state. Fields:
 | `change` | `Vec2<float>` | Total movement since the last frame |
 | `z` | `float` | Scroll wheel value |
 | `any_pressed` | `bool` | Whether any button is pressed |
-| `last_pressed` | `int` | Last pressed button index |
+| `last_pressed` | `int` | Button pressed this frame, or `-1` if none |
 
 ### Cursor
 

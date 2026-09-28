@@ -128,14 +128,14 @@ Quad(T x, T y, T width, T height);
 | `set_position(T x, T y)` | `void` | Set the position |
 | `set_size(T width, T height)` | `void` | Set the size |
 | `get_center()` | `Vec2<T>` | Get the center point |
-| `contains(const Vec2<T>& point)` | `bool` | Point-in-rect test |
-| `contains(T x, T y)` | `bool` | Point-in-rect test |
+| `contains(const Vec2<T>& point)` | `bool` | Point-in-rect test. The left and top edges are inside, the right and bottom edges are not, as for `collides`. Thus rectangles that share an edge never both contain a point |
+| `contains(T x, T y)` | `bool` | Same as `contains(point)` |
 | `collides(const Quad& other)` | `bool` | AABB collision test |
 | `collides_top(const Quad& other)` | `bool` | Top-edge collision |
 | `collides_bottom(const Quad& other)` | `bool` | Bottom-edge collision |
 | `collides_left(const Quad& other)` | `bool` | Left-edge collision |
 | `collides_right(const Quad& other)` | `bool` | Right-edge collision |
-| `closest_point(const Vec2<T>& point)` | `Vec2<T>` | Point in or on the rectangle that is closest to `point`. Returns `point` if it is inside |
+| `closest_point(const Vec2<T>& point)` | `Vec2<T>` | Point in or on the rectangle that is closest to `point`. Returns `point` if it is inside. Works with a negative size |
 | `distance_to(const Vec2<T>& point)` | `Vec2<T>::Real` | Distance from `point` to the edge of the rectangle. `0` if the point is inside |
 | `get_push_out(const Quad& other)` | `Vec2<T>` | Smallest move that pushes this rectangle out of `other`, along the axis with the smallest overlap. A zero vector if the rectangles do not overlap |
 

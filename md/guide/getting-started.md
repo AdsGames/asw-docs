@@ -23,7 +23,7 @@ include(FetchContent)
 FetchContent_Declare(
   asw
   GIT_REPOSITORY https://github.com/adsgames/asw.git
-  GIT_TAG        v0.11.1 # or the latest tag
+  GIT_TAG        v0.12.2 # or the latest tag
 )
 FetchContent_MakeAvailable(asw)
 
@@ -34,8 +34,29 @@ target_link_libraries(my_game PRIVATE asw::asw)
 If your project already uses CPM, this also works:
 
 ```cmake
-CPMAddPackage("gh:adsgames/asw#v0.11.1")
+CPMAddPackage("gh:adsgames/asw#v0.12.2")
 ```
+
+When ASW is the top-level project and you give no build type, it builds `Release`.
+
+### Install ASW as a package
+
+To install ASW once and use `find_package`, configure ASW with `ASW_INSTALL=ON`. This option also installs SDL3, SDL3_image, SDL3_ttf, SDL3_mixer and FreeType next to ASW, because the ASW package needs them. It is `OFF` by default.
+
+```sh
+cmake -S asw -B asw/build -DASW_INSTALL=ON -DCMAKE_INSTALL_PREFIX=$HOME/.local
+cmake --build asw/build
+cmake --install asw/build
+```
+
+Then, in your game:
+
+```cmake
+find_package(asw CONFIG REQUIRED)
+target_link_libraries(my_game PRIVATE asw::asw)
+```
+
+The installed package also gives you [`asw_add_web_target()`](#build-for-the-browser).
 
 ## Your first program
 
@@ -119,17 +140,25 @@ See [Assets](../modules/assets) for caching by key and for the save-file folder.
 
 ASW games also build to WebAssembly with [Emscripten](https://emscripten.org). Your game must use [`asw::core::run()`](../modules/core#run) or [`SceneManager::start()`](../modules/scene#start) for its main loop, because a `while` loop blocks the browser.
 
-Add these settings for Emscripten builds to your `CMakeLists.txt`. They make a web page, pack your `assets` folder into the build, and let memory grow:
+Call `asw_add_web_target()` in your `CMakeLists.txt`. For Emscripten builds, it makes a web page, packs your `assets` folder into the build, and lets memory grow. On other platforms it does nothing, so you can call it for every build:
 
 ```cmake
-if(EMSCRIPTEN)
-  set_target_properties(my_game PROPERTIES SUFFIX ".html")
-  target_link_options(my_game PRIVATE
-    "--preload-file=${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets"
-    "-sALLOW_MEMORY_GROWTH=1"
-  )
-endif()
+asw_add_web_target(my_game
+  TITLE "My Game"
+  ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets
+)
 ```
+
+The page is `index.html`. It fills the window, shows the loading progress, and stops the arrow keys, <kbd>Space</kbd> and <kbd>Tab</kbd> from scrolling the page. When the game calls `asw::core::exit()`, the page shows "Stopped. Click to restart."
+
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `TITLE` | the target name | Page title |
+| `BACKGROUND` | `#0a0a0a` | Page color |
+| `OUTPUT_NAME` | `index` | Page file name, without `.html` |
+| `ASSETS` | none | Folders to preload at `/assets`. You can give more than one |
+| `SHELL` | the ASW page | Your own HTML shell. It must contain `{{{ SCRIPT }}}`, and can have a `#canvas` and a `#status` |
+| `PRE_JS` | none | More `--pre-js` files |
 
 Then build with the Emscripten toolchain and serve the output folder. Browsers do not load WebAssembly from `file://` addresses.
 
@@ -139,7 +168,25 @@ cmake --build build-web
 cd build-web && python3 -m http.server
 ```
 
-Open `http://localhost:8000/my_game.html`. In the browser, `run()` does not return, so code after it does not run. The [examples](../examples) are built this way. You can play them on this site.
+Open `http://localhost:8000/`. In the browser, `run()` does not return, so code after it does not run. The [examples](../examples) are built this way. You can play them on this site.
+
+### Embed the game in another page
+
+When the game is in an `iframe`, the page does not show its own loading label. Instead, it sends its loading state to the parent page with `postMessage`, so the parent page can show it:
+
+```js
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "asw:status") {
+    // event.data.text is the Emscripten status, "" when loading is done
+  } else if (event.data?.type === "asw:ready") {
+    // The game started
+  }
+});
+```
+
+### Custom shell
+
+The ASW page adds `setStatus`, `onRuntimeInitialized` and `onStop` hooks to `Module`. A custom `SHELL` can set its own hooks on `Module`. They run after the ASW hooks.
 
 ## Use scenes for larger games
 

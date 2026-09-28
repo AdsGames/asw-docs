@@ -27,7 +27,6 @@ class Widget;
 | `nav_up` / `nav_down` / `nav_left` / `nav_right` | `Widget*` | `nullptr` | Widget to focus in that direction, instead of the nearest one |
 | `focus_ring` | `bool` | `true` | Draw the theme focus ring while the widget has visible focus. Turn off for widgets that show focus themselves |
 | `parent` | `Widget*` | `nullptr` | Pointer to the parent widget |
-| `children` | `std::vector<std::unique_ptr<Widget>>` | | Child widgets |
 | `transform` | `asw::Quad<float>` | | Position and size |
 
 ### Methods
@@ -58,6 +57,26 @@ WidgetId id() const;
 ```
 
 Get the unique identifier for this widget (`WidgetId` is `uint32_t`).
+
+#### `children`
+
+```cpp
+const std::vector<std::unique_ptr<Widget>>& children() const;
+```
+
+Get the child widgets. Change them with `add_child`, `remove_child` and `clear_children`.
+
+::: warning Changed in v0.12.2
+`children` was a public field. It is now private. Read it with `children()`.
+:::
+
+#### `measure`
+
+```cpp
+virtual void measure(Context& ctx);
+```
+
+Set this widget's own size, before its parent places it. Does nothing by default. Override it for a widget whose size depends on the context, e.g. on the theme font. `Button` uses it to fit its text.
 
 #### `layout`
 
@@ -115,7 +134,11 @@ bool remove_child(const Widget& child);
 void clear_children();
 ```
 
-Remove and destroy one child, or all children. `remove_child` returns `false` if the widget is not a child of this widget. You can call these from a callback. `Root` drops its pointers to removed widgets before it uses them again.
+Remove one child, or all children. `remove_child` returns `false` if the widget is not a child of this widget. A removed widget leaves the tree at once, and is destroyed at the next `Root::update()`. Thus a callback can remove any widget, even the widget that it runs in.
+
+#### Moving a widget
+
+A moved widget takes the children with it, and they point to it as their parent. A move-constructed widget gets a new id and no parent. A move-assigned widget keeps its place in the tree: its parent, id and state. Its old children are removed as with `clear_children`.
 
 ## UIEvent
 
@@ -268,6 +291,8 @@ struct Navigation;
 | `activate` | Press the focused widget |
 | `back` | Go back. Sent to the focused widget, then to `Root::on_back` |
 
+A key that types text into an `InputBox` does not also navigate, activate or go back.
+
 An empty name uses the built-in keys for that step: arrows, <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, and <kbd>Escape</kbd>. Set a name to read that action instead, so the UI follows the game's own bindings, controllers included.
 
 ### `bind_default_navigation`
@@ -328,6 +353,8 @@ class FocusManager;
 | `focus_start(Context& ctx)` | Focus `default_focus`, or the first focusable widget, when nothing has focus. Returns `true` if focus was set |
 | `focus_dir(Context& ctx, int dx, int dy)` | Move focus in a 2D direction |
 
+A hidden or disabled widget cannot take focus, and neither can its children.
+
 `focus_dir` picks the target in this order:
 
 1. The widget's `nav_up`, `nav_down`, `nav_left` or `nav_right`, if set.
@@ -373,7 +400,7 @@ if (!ui.update()) {
 
 ### Stack
 
-Places children one after another, top to bottom or left to right. Children keep their own size along the stack, for example the height of each row in a vertical stack. Across the stack, they follow `align`. Hidden children take no space. Put stacks in stacks to make rows inside columns.
+Places children one after another, top to bottom or left to right. Children keep their own size along the stack, for example the height of each row in a vertical stack. Across the stack, they follow `align`. Hidden children take no space. Put stacks in stacks to make rows inside columns. When `Stretch` stops forcing a size on a child, e.g. after `align` changes, the child gets its own size back.
 
 ```cpp
 class Stack : public Widget;
@@ -409,6 +436,8 @@ class Grid : public Widget;
 | `padding` | `float` | `0.0` | Space inside the grid on every side |
 | `row_height` | `float` | `0.0` | Height of every row. `0` makes each row as tall as its tallest child |
 
+A child that the row made taller gets its own height back when the row stops forcing it, e.g. after the tallest child in the row is hidden.
+
 ### `in_row_with_focusables`
 
 ```cpp
@@ -429,7 +458,7 @@ class Panel : public Widget;
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `bg` | `asw::Color` | transparent | Background color |
+| `bg` | `asw::Color` | transparent | Background color. A fully transparent `bg` is not drawn |
 | `bg_image` | `asw::Texture` | `nullptr` | Background image texture |
 
 ### Label
@@ -483,7 +512,7 @@ class Button : public Widget;
 
 | Method | Description |
 |--------|-------------|
-| `set_text(const std::string& t, bool auto_size = false)` | Set the text. If `auto_size` is `true`, resize the button to fit the text |
+| `set_text(const std::string& t, bool auto_size = false)` | Set the text. If `auto_size` is `true`, resize the button to fit the text. A button without its own font is sized with the theme font when it is next measured, before its parent places it |
 | `set_texture(const asw::Texture& tex, bool auto_size = false)` | Set the texture. If `auto_size` is `true`, resize the button to the texture size |
 | `set_images(normal, hover = nullptr, pressed = nullptr, disabled = nullptr, bool auto_size = true)` | Make an image button: set the state textures, turn off the background, and optionally resize the button to the `normal` texture |
 | `get_style(const Context& ctx)` | Get the style the button draws with: its own `style`, or the theme `button` style |

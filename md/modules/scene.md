@@ -50,7 +50,7 @@ Called each tick with `dt` in seconds. The default implementation removes dead o
 virtual void draw();
 ```
 
-Called each frame. The default implementation sorts objects by `z_index` and draws all active objects.
+Called each frame. The default implementation sorts objects by `z_index` and draws all active objects. The sort is stable, so objects with the same `z_index` keep their order and do not flicker.
 
 #### `cleanup`
 

@@ -62,7 +62,7 @@ Linearly interpolate between two values. The `t` parameter is clamped to 0.0 - 1
 | `b` | `const T&` | End value |
 | `t` | `float` | Interpolation factor (0.0 - 1.0) |
 
-Works with any type that supports `+`, `-`, and `*` with a float (e.g., `float`, `Vec2<float>`).
+Works with any type that supports `+`, `-`, and `*` with a float (e.g., `float`, `Vec2<float>`). Integer types are calculated in floating point, so a falling `unsigned` range does not wrap. The result is clamped to the range of the type.
 
 ## Example
 

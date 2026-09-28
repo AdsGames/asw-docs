@@ -2,7 +2,7 @@
 // A playable ASW example. Shows a screenshot until the reader presses Play,
 // then loads the example (about 3.5 MB) from /play/<name>/, which
 // scripts/fetch-examples.mjs downloads from the ASW release.
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { withBase } from "vitepress";
 import { activeExample } from "./activeExample";
 
@@ -23,6 +23,24 @@ const root = ref<HTMLElement>();
 const frame = ref<HTMLIFrameElement>();
 const posterFailed = ref(false);
 
+// The game page hides its own loading label in an iframe and posts its
+// status here instead, as { type: "asw:status", text } and { type: "asw:ready" }
+const status = ref("");
+
+function onMessage(event: MessageEvent) {
+  if (!frame.value || event.source !== frame.value.contentWindow) {
+    return;
+  }
+  if (event.data?.type === "asw:status") {
+    status.value = String(event.data.text ?? "");
+  } else if (event.data?.type === "asw:ready") {
+    status.value = "";
+  }
+}
+
+onMounted(() => window.addEventListener("message", onMessage));
+onBeforeUnmount(() => window.removeEventListener("message", onMessage));
+
 // Only one example runs at a time, so sound and CPU use do not pile up
 function play() {
   activeExample.value = id;
@@ -40,6 +58,7 @@ function focusGame() {
 }
 
 function restart() {
+  status.value = "Loading…";
   frame.value?.contentWindow?.location.reload();
 }
 
@@ -48,6 +67,7 @@ function fullscreen() {
 }
 
 watch(playing, (now) => {
+  status.value = now ? "Loading…" : "";
   if (!now && document.fullscreenElement === root.value) {
     document.exitFullscreen();
   }
@@ -65,6 +85,7 @@ watch(playing, (now) => {
         allow="autoplay; fullscreen; gamepad"
         @load="focusGame"
       />
+      <div v-if="playing && status" class="status" role="status">{{ status }}</div>
       <template v-else>
         <img
           v-if="!posterFailed"
@@ -120,6 +141,19 @@ watch(playing, (now) => {
   border: 0;
   margin: 0;
   object-fit: cover;
+}
+
+.status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #9aa0a6;
+  font: 14px system-ui, sans-serif;
+  pointer-events: none;
 }
 
 .play {

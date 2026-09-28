@@ -83,6 +83,8 @@ T ease(const T& a, const T& b, float t, Func func);
 
 Apply an easing function and interpolate between two values. The progress `t` is clamped to 0.0 - 1.0. `T` must be an arithmetic type, and `Func` must be a callable that takes a `float` and returns a `float`.
 
+Integer types are calculated in floating point, so a falling `unsigned` range does not wrap. If an easing goes past the end (e.g. `ease_out_back`), the result is clamped to the range of `T`.
+
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `a` | `const T&` | Start value |

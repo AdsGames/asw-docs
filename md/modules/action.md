@@ -113,7 +113,7 @@ Returns `true` if any binding of the action is active now.
 bool get_action_down(std::string_view name);
 ```
 
-Returns `true` if the action became active this frame.
+Returns `true` if the action became active this frame. The whole action must change from inactive to active. While one binding holds the action, a second binding does not make it active again, e.g. a second jump key does not jump again. A tap that starts and ends in one frame still counts.
 
 ### `get_action_up`
 
@@ -121,7 +121,7 @@ Returns `true` if the action became active this frame.
 bool get_action_up(std::string_view name);
 ```
 
-Returns `true` if the action became inactive this frame.
+Returns `true` if the action became inactive this frame. The action is inactive only when no binding holds it.
 
 ### `get_action_strength`
 
