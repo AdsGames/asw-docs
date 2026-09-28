@@ -4,7 +4,7 @@
   "description": "Documentation for ASW, a C++ wrapper for SDL3 for making games.",
   "private": true,
   "license": "MIT",
-  "aswVersion": "v0.11.1",
+  "aswVersion": "v0.12.0",
   "devDependencies": {
     "vitepress": "^2.0.0-alpha.16",
     "vitepress-plugin-llms": "^1.11.1",

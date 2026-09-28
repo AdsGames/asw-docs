@@ -87,8 +87,8 @@ Sets how the glyphs of a font are rendered. Pass it to `asw::assets::load_font()
 
 | Value | Description |
 |-------|-------------|
-| `Smooth` | Anti-aliased glyphs with linear filtering, for regular fonts |
-| `Pixel` | Hard-edged glyphs with nearest filtering, for pixel art fonts |
+| `Smooth` | Anti-aliased glyphs rendered at the output resolution, for regular fonts. Text stays sharp when the window is scaled up or on high density displays |
+| `Pixel` | Hard-edged glyphs rendered at the logical size and scaled with nearest filtering, for pixel art fonts |
 
 ## Example
 

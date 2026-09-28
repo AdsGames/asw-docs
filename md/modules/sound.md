@@ -165,9 +165,19 @@ Play a sample at a point in the world. The sound is panned, faded and pitch-shif
 
 ```cpp
 SoundHandle play_at(const asw::Sample& sample, float x, float volume = 1.0F);
+SoundHandle play_at(const asw::Sample& sample, float x, const PlayOptions& options);
 ```
 
 Play a sample panned by its horizontal position on the screen. `x` is in logical screen coordinates. Sounds pan to the side they are on. They fade out when they are off screen and are silent one full screen width past the edge. Use this for simple games that do not have a listener.
+
+The `PlayOptions` version also takes pitch, variation, bus, priority and the rest. `options.volume` is the volume before the fade, and `options.pan` is replaced by the screen position. The pan is set once when the sound starts.
+
+```cpp
+asw::sound::PlayOptions shot;
+shot.pitch_variation = 0.08F;
+shot.priority = 2;
+asw::sound::play_at(gunshot, enemy.position.x, shot);
+```
 
 ## Listener and Spatial Settings
 

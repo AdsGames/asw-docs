@@ -157,9 +157,10 @@ A scrolling world.
 <PlayableExample name="ui" />
 
 - `asw::ui::Root` controls input, layout and drawing
-- `Panel`, `VBox`, `Label`, `Button` and `InputBox`, with `on_click` and `on_change` callbacks
-- Keyboard navigation: <kbd>Tab</kbd> / arrows move focus, <kbd>Enter</kbd> activates
-- Changes to `asw::ui::Theme` at runtime
+- `Panel`, `Stack`, `Label`, `Button`, `Choice`, `Slider`, `Checkbox` and `InputBox`, with `on_click` and `on_change` callbacks
+- The theme font, so widgets do not each need a font
+- Keyboard and controller navigation with `asw::ui::bind_default_navigation()` and `Root::on_back`
+- Changes to `asw::ui::Theme` at runtime, and a `ButtonStyle` for one button
 - `asw::assets::get_save_path()` keeps the name between runs
 - `asw::dialog::request_file()` and `take_file()` for a native file chooser, and `confirm()` and `warn()` message boxes
 

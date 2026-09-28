@@ -95,7 +95,7 @@ void text(const asw::Font& font,
           asw::TextJustify justify = asw::TextJustify::Left);
 ```
 
-Draw text with the specified justification. The position is rounded to whole pixels after justification, so glyphs stay sharp. Rendered text is cached. The alpha of `color` is applied when the text is drawn, so you can fade text without making a new cached texture for each alpha value.
+Draw text with the specified justification. The position is rounded to whole pixels after justification, so glyphs stay sharp. Smooth fonts are rendered at the output resolution, so text stays sharp when the window is scaled up or on high density displays. Rendered text is cached. The alpha of `color` is applied when the text is drawn, so you can fade text without making a new cached texture for each alpha value.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
