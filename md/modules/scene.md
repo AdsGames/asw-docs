@@ -2,8 +2,12 @@
 
 Scene management system with a fixed-timestep game loop.
 
-**Header:** `#include <asw/modules/scene.h>`
+**Header:** `#include <asw/modules/scene.h>`\
 **Namespace:** `asw::scene`
+
+<PlayableExample name="scenes" />
+
+*From the [scenes example](../examples#scenes).*
 
 ## Scene
 
@@ -30,7 +34,7 @@ explicit Scene(SceneManager<T>& manager);
 virtual void init();
 ```
 
-Called when the scene becomes active. Set up objects and state here.
+Called each time the scene becomes the active scene, so it runs again when the game returns to this scene. Set up objects and state here.
 
 #### `update`
 
@@ -38,7 +42,7 @@ Called when the scene becomes active. Set up objects and state here.
 virtual void update(float dt);
 ```
 
-Called each tick with `dt` in seconds. The default implementation removes dead objects, updates active objects, and adds newly created objects.
+Called each tick with `dt` in seconds. The default implementation removes dead objects, updates active objects, and adds newly created objects. An object's `update` can safely call `register_object`.
 
 #### `draw`
 
@@ -54,7 +58,7 @@ Called each frame. The default implementation sorts objects by `z_index` and dra
 virtual void cleanup();
 ```
 
-Called when the scene is about to be replaced. Clears all objects by default.
+Called when the game switches away from this scene. Removes all objects by default.
 
 ### Object Management
 
@@ -122,7 +126,7 @@ Register a scene with a unique ID. `SceneType` must derive from `Scene<T>`.
 void set_next_scene(const T sceneId);
 ```
 
-Queue a transition to the given scene. The transition happens at the start of the next `update` call.
+Queue a transition to the given scene. The transition happens at the start of the next `update` call. If no scene is registered with `sceneId`, the current scene keeps running and an error is printed to `std::cerr`.
 
 ### `start`
 
@@ -130,7 +134,9 @@ Queue a transition to the given scene. The transition happens at the start of th
 void start();
 ```
 
-Start the managed main loop with a fixed timestep. Runs until `asw::core::is_exiting()` returns `true`, then calls `cleanup()`. Supports Emscripten.
+Start the managed main loop with a fixed timestep. Runs until `asw::core::is_exiting()` returns `true`, then calls `cleanup()`.
+
+Emscripten builds use the same fixed timestep as desktop builds, so games behave the same in the browser. In the browser, `start()` runs the loop with [`asw::core::run()`](./core#run), so it does not return, and `exit()` stops the loop. On both, a long frame (for example, a breakpoint or a hidden browser tab) is limited to `MAX_FRAME_TIME`. Thus the loop does not try to run hundreds of updates to catch up.
 
 ### `cleanup`
 
@@ -162,7 +168,7 @@ Draw the current scene. Call this if you want a custom loop instead of `start()`
 void set_timestep(std::chrono::nanoseconds ts);
 ```
 
-Set the fixed timestep for the game loop (default: 8ms / ~125 ticks per second).
+Set the fixed timestep for the game loop (default: `DEFAULT_TIMESTEP`, 8 ms or about 125 updates per second). A value of `0` or less is changed to 1 ns, so the loop cannot run forever.
 
 ### `get_timestep`
 
@@ -179,6 +185,13 @@ int get_fps() const;
 ```
 
 Get the current FPS. Only available when using the managed `start()` loop.
+
+## Constants
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `DEFAULT_TIMESTEP` | `std::chrono::milliseconds(8)` | Default fixed timestep (about 125 updates per second) |
+| `MAX_FRAME_TIME` | `std::chrono::milliseconds(250)` | Longest frame time that the managed loop simulates at once |
 
 ## Example
 

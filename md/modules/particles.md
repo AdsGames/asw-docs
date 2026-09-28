@@ -2,8 +2,12 @@
 
 Lightweight particle emitter system that integrates with the scene system.
 
-**Header:** `#include <asw/modules/particles.h>`
+**Header:** `#include <asw/modules/particles.h>`\
 **Namespace:** `asw`
+
+<PlayableExample name="particles" />
+
+*From the [particles example](../examples#particles).*
 
 ## ParticleConfig
 
@@ -96,9 +100,12 @@ Update all alive particles. Called automatically when in a scene.
 
 ```cpp
 void draw() override;
+void draw(const Camera& camera);
 ```
 
-Draw all alive particles. Called automatically when in a scene.
+Draw all alive particles. The first overload uses particle positions as screen positions. It is called automatically when the emitter is in a scene.
+
+The second overload uses particle positions as world positions and draws them through `camera`, including screen shake. Use it in a scrolling world. See [Camera](./camera).
 
 #### `get_alive_count`
 

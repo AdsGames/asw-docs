@@ -2,7 +2,7 @@
 
 Core type aliases used throughout the ASW library.
 
-**Header:** `#include <asw/modules/types.h>`
+**Header:** `#include <asw/modules/types.h>`\
 **Namespace:** `asw`
 
 ## Type Aliases
@@ -43,6 +43,24 @@ enum class BlendMode : SDL_BlendMode {
 | `Multiply` | Multiply blending |
 
 The underlying type of `BlendMode` is `SDL_BlendMode`, so you can cast between the two directly.
+
+## ScaleMode Enum
+
+```cpp
+enum class ScaleMode {
+  Nearest,
+  Linear,
+};
+```
+
+Sets how a texture is filtered when it is scaled. Pass it to `asw::draw::set_scale_mode()`.
+
+| Value | Description |
+|-------|-------------|
+| `Nearest` | Nearest-pixel filtering. Keeps hard pixel edges |
+| `Linear` | Linear filtering. Makes scaled textures smooth |
+
+The values map to `SDL_SCALEMODE_NEAREST` and `SDL_SCALEMODE_LINEAR`.
 
 ## TextJustify Enum
 

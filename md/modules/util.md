@@ -2,7 +2,7 @@
 
 General utility functions.
 
-**Header:** `#include <asw/modules/util.h>`
+**Header:** `#include <asw/modules/util.h>`\
 **Namespace:** `asw::util`
 
 ## Functions
@@ -30,6 +30,14 @@ asw::Vec2<int> get_text_size(const asw::Font& font, const std::string& text);
 ```
 
 Get the rendered size of a string with the given font. Results are cached.
+
+### `get_font_height`
+
+```cpp
+int get_font_height(const asw::Font& font);
+```
+
+Get the height of one line of text in a font, in pixels. Returns `0` if the font is not loaded.
 
 ### `clear_text_size_cache`
 

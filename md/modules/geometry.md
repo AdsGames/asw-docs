@@ -2,7 +2,7 @@
 
 Common geometry types: 2D/3D vectors and rectangles.
 
-**Header:** `#include <asw/modules/geometry.h>`
+**Header:** `#include <asw/modules/geometry.h>`\
 **Namespace:** `asw`
 
 ## Vec2
@@ -32,12 +32,22 @@ Vec2(T x, T y);
 
 | Method | Return | Description |
 |--------|--------|-------------|
-| `angle()` | `T` | Angle of the vector in radians |
-| `angle(const Vec2& other)` | `T` | Angle between two vectors in radians |
-| `distance(const Vec2& other)` | `T` | Distance between two vectors |
+| `angle()` | `Real` | Angle of the vector in radians |
+| `angle(const Vec2& other)` | `Real` | Angle between two vectors in radians |
+| `distance(const Vec2& other)` | `Real` | Distance between two vectors |
 | `dot(const Vec2& other)` | `T` | Dot product |
 | `cross(const Vec2& other)` | `T` | Cross product (scalar) |
-| `magnitude()` | `T` | Length of the vector |
+| `magnitude()` | `Real` | Length of the vector |
+| `normalized()` | `Vec2` | Unit vector with the same direction. A zero vector if the length is `0`. Only for floating-point `T` |
+| `distance_to_segment(const Vec2& start, const Vec2& end)` | `Real` | Distance from this point to the nearest point on the line segment from `start` to `end`. Useful for beams, lasers and swept hit checks. If `start` and `end` are the same point, the distance to `start` |
+
+### Static Methods
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| `from_angle(T angle, T length = T(1))` | `Vec2` | Vector that points at `angle` (radians, clockwise from the positive x axis, like the rest of ASW) with length `length`. Only for floating-point `T` |
+
+`Real` is `T` for floating-point vectors and `float` for integer vectors, so lengths and angles of integer vectors are not truncated.
 
 ### Operators
 
@@ -73,11 +83,13 @@ Vec3(T x, T y, T z);
 
 | Method | Return | Description |
 |--------|--------|-------------|
-| `angle(const Vec3& other)` | `T` | Angle between two vectors in radians |
-| `distance(const Vec3& other)` | `T` | Distance between two vectors |
+| `angle(const Vec3& other)` | `Real` | Angle between two vectors in radians. `0` if either vector has no length |
+| `distance(const Vec3& other)` | `Real` | Distance between two vectors |
 | `dot(const Vec3& other)` | `T` | Dot product |
 | `cross(const Vec3& other)` | `Vec3` | Cross product (vector) |
-| `magnitude()` | `T` | Length of the vector |
+| `magnitude()` | `Real` | Length of the vector |
+
+`Real` is the same as for `Vec2`.
 
 ### Operators
 
@@ -123,10 +135,15 @@ Quad(T x, T y, T width, T height);
 | `collides_bottom(const Quad& other)` | `bool` | Bottom-edge collision |
 | `collides_left(const Quad& other)` | `bool` | Left-edge collision |
 | `collides_right(const Quad& other)` | `bool` | Right-edge collision |
+| `closest_point(const Vec2<T>& point)` | `Vec2<T>` | Point in or on the rectangle that is closest to `point`. Returns `point` if it is inside |
+| `distance_to(const Vec2<T>& point)` | `Vec2<T>::Real` | Distance from `point` to the edge of the rectangle. `0` if the point is inside |
+| `get_push_out(const Quad& other)` | `Vec2<T>` | Smallest move that pushes this rectangle out of `other`, along the axis with the smallest overlap. A zero vector if the rectangles do not overlap |
+
+Add the result of `get_push_out` to the position of the rectangle to stop a moving box from going into solid scenery.
 
 ### Operators
 
-`+`, `-`, `*`, `/` (with other `Quad` or scalar values)
+`+` and `-` take another `Quad` and add or subtract both its position and its size. `*` and `/` take a scalar.
 
 ## Type Aliases
 
@@ -144,13 +161,27 @@ Quad(T x, T y, T width, T height);
 ```cpp
 asw::Vec2<float> pos(100.0f, 200.0f);
 asw::Vec2<float> vel(1.0f, 0.0f);
-pos += vel * delta_time;
+pos += vel * asw::core::get_delta_time();
 
 asw::Quad<float> player(100, 200, 32, 32);
 asw::Quad<float> enemy(150, 210, 32, 32);
 
 if (player.collides(enemy)) {
   // handle collision
+}
+
+// Push the player out of a wall
+asw::Quad<float> wall(120, 180, 64, 64);
+player.position += player.get_push_out(wall);
+
+// Move at a constant speed in any direction
+asw::Vec2<float> dir = asw::Vec2<float>(3.0f, 4.0f).normalized(); // (0.6, 0.8)
+asw::Vec2<float> velocity = asw::Vec2<float>::from_angle(0.785f, 200.0f);
+
+// Check if the player touches a laser beam
+asw::Vec2<float> beam_start(0.0f, 50.0f), beam_end(400.0f, 250.0f);
+if (player.get_center().distance_to_segment(beam_start, beam_end) < 16.0f) {
+  // hit by the beam
 }
 
 if (player.contains(asw::input::get_mouse().position)) {

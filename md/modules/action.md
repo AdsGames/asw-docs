@@ -2,8 +2,12 @@
 
 Bind named actions to one or more keyboard, mouse, or controller inputs. An action is active when any of its bindings is active.
 
-**Header:** `#include <asw/modules/action.h>`
+**Header:** `#include <asw/modules/action.h>`\
 **Namespace:** `asw::input`
+
+<PlayableExample name="actions" />
+
+*From the [actions example](../examples#actions).*
 
 ## Binding Types
 
@@ -36,7 +40,7 @@ struct ControllerButtonBinding {
 };
 ```
 
-Binds a controller (gamepad) button.
+Binds a controller (gamepad) button. Set `controller_index` to [`ANY_CONTROLLER`](./input#any-controller) to accept the button on every connected controller.
 
 ### `ControllerAxisBinding`
 
@@ -49,12 +53,12 @@ struct ControllerAxisBinding {
 };
 ```
 
-Binds a controller axis. The binding is active when the axis value goes past `threshold`. Set `positive_direction` to `false` to bind the negative direction (for example, left stick left).
+Binds a controller axis. The binding is active when the axis value goes past `threshold`. The threshold is compared with the axis value after the dead zone is applied (see [`get_controller_axis`](./input#get-controller-axis)). Set `positive_direction` to `false` to bind the negative direction (for example, left stick left).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `axis` | `ControllerAxis` | | The axis to read |
-| `controller_index` | `uint32_t` | `0` | The controller to read |
+| `controller_index` | `uint32_t` | `0` | The controller to read, or `ANY_CONTROLLER` to check each connected controller separately |
 | `threshold` | `float` | `0.5` | Axis value that activates the binding |
 | `positive_direction` | `bool` | `true` | `false` binds the negative direction |
 
@@ -133,7 +137,7 @@ Get the analogue strength of an action, from `0.0` to `1.0`. Key and button bind
 void update_actions();
 ```
 
-Update the cached action states from the current input. `asw::input::reset()` calls this for you. Call it yourself only if you manage the input loop manually.
+Update the cached action states from the current input. `asw::core::update()` calls this for you, after it processes events, so actions match raw input on the same frame. Call it yourself only if you manage the input loop manually.
 
 ## Example
 

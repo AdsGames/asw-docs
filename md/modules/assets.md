@@ -2,7 +2,7 @@
 
 Functions for loading, caching, and managing textures, fonts, and audio.
 
-**Header:** `#include <asw/modules/assets.h>`
+**Header:** `#include <asw/modules/assets.h>`\
 **Namespace:** `asw::assets`
 
 ## Paths
@@ -63,6 +63,20 @@ asw::Texture create_texture(int w, int h);
 ```
 
 Create a blank texture with the given dimensions. Useful for render targets.
+
+### `create_radial_gradient`
+
+```cpp
+asw::Texture create_radial_gradient(int size, asw::Color inner, asw::Color outer);
+```
+
+Create a square texture with a radial gradient. The color changes smoothly from `inner` at the center to `outer` at the edge and in the corners. The texture has linear scaling and a blend mode set. Useful for lights.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `size` | `int` | The width and height of the texture |
+| `inner` | `asw::Color` | The color at the center |
+| `outer` | `asw::Color` | The color at the edge and in the corners |
 
 ## Fonts
 
@@ -194,6 +208,10 @@ asw::assets::unload_texture("player");
 
 // Or clear everything
 asw::assets::clear_all();
+
+// Generated textures
+auto light = asw::assets::create_radial_gradient(128, asw::Color(255, 220, 150, 255),
+                                                 asw::Color(255, 220, 150, 0));
 
 // Save files
 std::string save_file = asw::assets::get_save_path("A.D.S. Games", "My Game") + "save.dat";

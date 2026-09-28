@@ -2,7 +2,7 @@
 
 Common game object classes with built-in physics and rendering.
 
-**Header:** `#include <asw/modules/game.h>`
+**Header:** `#include <asw/modules/game.h>`\
 **Namespace:** `asw::game`
 
 ## Physics
@@ -83,7 +83,7 @@ void set_texture(const asw::Texture& texture, bool auto_size = true);
 
 Set the sprite's texture. When `auto_size` is `true`, the transform size is automatically set to the texture dimensions.
 
-Rendering automatically handles alpha and rotation.
+The sprite is stretched to fill `transform` (position and size). If `rotation` is not `0`, the sprite is rotated around its center. `alpha` is applied when the sprite is drawn.
 
 ## Text
 

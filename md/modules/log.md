@@ -2,16 +2,18 @@
 
 Structured logging system with severity levels.
 
-**Header:** `#include <asw/modules/log.h>`
+**Header:** `#include <asw/modules/log.h>`\
 **Namespace:** `asw::log`
 
 ## Log Levels
 
 ```cpp
-enum class Level { DEBUG, INFO, WARN, ERROR };
+enum class Level { Debug, Info, Warn, Error };
 ```
 
-Messages below the configured minimum level are ignored.
+Messages below the configured minimum level are ignored. The default level is `Info`.
+
+Each message starts with the local time, with milliseconds (for example, `[14:03:27.412]`).
 
 ## Functions
 
@@ -97,9 +99,9 @@ Log a progress message with a progress bar and a percentage. `progress` is a val
 ## Example
 
 ```cpp
-asw::log::set_level(asw::log::Level::INFO);
+asw::log::set_level(asw::log::Level::Info);
 
-asw::log::debug("This won't appear"); // below INFO level
+asw::log::debug("This won't appear"); // below Info level
 asw::log::info("Game started");
 asw::log::warn("Low memory");
 asw::log::error("Failed to load asset");
@@ -112,7 +114,7 @@ asw::log::error("Failed to load file: {}", filename);
 // Progress
 asw::log::progress(0.5f, "Loading assets ({}/{})", loaded, total);
 
-// Log to a file
+// Log to a file (needs #include <fstream>)
 std::ofstream log_file("game.log");
 asw::log::set_output(log_file);
 ```

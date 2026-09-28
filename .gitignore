@@ -3,3 +3,5 @@ node_modules
 .vitepress/dist
 .vitepress/cache
 dist/
+# Playable examples, downloaded by scripts/fetch-examples.mjs
+md/public/play

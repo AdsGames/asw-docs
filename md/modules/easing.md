@@ -2,8 +2,12 @@
 
 Easing functions for smooth animations and transitions.
 
-**Header:** `#include <asw/modules/easing.h>`
+**Header:** `#include <asw/modules/easing.h>`\
 **Namespace:** `asw::easing`
+
+<PlayableExample name="easing" />
+
+*From the [easing example](../examples#easing).*
 
 ## Functions
 

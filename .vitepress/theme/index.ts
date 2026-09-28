@@ -3,6 +3,7 @@ import { h } from "vue";
 import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 import CopyOrDownloadAsMarkdownButtons from "vitepress-plugin-llms/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue";
+import PlayableExample from "./components/PlayableExample.vue";
 import "./style.css";
 
 export default {
@@ -17,5 +18,6 @@ export default {
       "CopyOrDownloadAsMarkdownButtons",
       CopyOrDownloadAsMarkdownButtons,
     );
+    app.component("PlayableExample", PlayableExample);
   },
 } satisfies Theme;

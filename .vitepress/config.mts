@@ -14,7 +14,8 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: "Home", link: "/" },
+      { text: "Guide", link: "/guide/getting-started" },
+      { text: "Examples", link: "/examples" },
       { text: "Modules", link: "/modules/core" },
     ],
 
@@ -29,6 +30,13 @@ export default defineConfig({
 
     sidebar: [
       {
+        text: "Introduction",
+        items: [
+          { text: "Getting Started", link: "/guide/getting-started" },
+          { text: "Examples", link: "/examples" },
+        ],
+      },
+      {
         text: "Core",
         items: [
           { text: "Core", link: "/modules/core" },
@@ -41,6 +49,8 @@ export default defineConfig({
         text: "Graphics",
         items: [
           { text: "Draw", link: "/modules/draw" },
+          { text: "Sprite Sheet", link: "/modules/sprite-sheet" },
+          { text: "Camera", link: "/modules/camera" },
           { text: "Particles", link: "/modules/particles" },
           { text: "Easing", link: "/modules/easing" },
         ],
@@ -76,11 +86,19 @@ export default defineConfig({
         items: [
           { text: "Geometry", link: "/modules/geometry" },
           { text: "Random", link: "/modules/random" },
+          { text: "Dialog", link: "/modules/dialog" },
           { text: "Log", link: "/modules/log" },
           { text: "Util", link: "/modules/util" },
         ],
       },
     ],
+
+    outline: [2, 3],
+
+    editLink: {
+      pattern: "https://github.com/adsgames/asw-docs/edit/main/md/:path",
+      text: "Edit this page on GitHub",
+    },
 
     socialLinks: [{ icon: "github", link: "https://github.com/adsgames/asw" }],
   },

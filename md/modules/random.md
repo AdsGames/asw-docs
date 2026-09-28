@@ -2,7 +2,7 @@
 
 Random number generation utilities.
 
-**Header:** `#include <asw/modules/random.h>`
+**Header:** `#include <asw/modules/random.h>`\
 **Namespace:** `asw::random`
 
 ## Functions
@@ -29,7 +29,7 @@ Generate a random float between 0 and `max`.
 int between(int min, int max);
 ```
 
-Generate a random integer between `min` and `max` (inclusive).
+Generate a random integer between `min` and `max` (inclusive). If `min` is greater than `max`, the two values are swapped.
 
 ### `between` (float)
 
@@ -37,7 +37,7 @@ Generate a random integer between `min` and `max` (inclusive).
 float between(float min, float max);
 ```
 
-Generate a random float between `min` and `max`.
+Generate a random float between `min` and `max`. If `min` is greater than `max`, the two values are swapped.
 
 ### `chance`
 

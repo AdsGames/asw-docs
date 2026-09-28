@@ -2,7 +2,7 @@
 
 Keyboard, mouse, and game controller input handling.
 
-**Header:** `#include <asw/modules/input.h>`
+**Header:** `#include <asw/modules/input.h>`\
 **Namespace:** `asw::input`
 
 ## Keyboard
@@ -125,7 +125,7 @@ Get the current mouse state. Fields:
 | Field | Type | Description |
 |-------|------|-------------|
 | `position` | `Vec2<float>` | Current mouse position |
-| `change` | `Vec2<float>` | Movement delta since last frame |
+| `change` | `Vec2<float>` | Total movement since the last frame |
 | `z` | `float` | Scroll wheel value |
 | `any_pressed` | `bool` | Whether any button is pressed |
 | `last_pressed` | `int` | Last pressed button index |
@@ -140,9 +140,27 @@ void set_cursor(asw::input::CursorId cursor);
 
 Change the system cursor. Available cursors include `CursorId::Default`, `CursorId::Text`, `CursorId::Wait`, `CursorId::Crosshair`, `CursorId::Pointer`, and various resize cursors.
 
+#### `set_cursor_visible`
+
+```cpp
+void set_cursor_visible(bool visible);
+```
+
+Show or hide the mouse cursor. Use this if your game draws its own cursor.
+
 ## Game Controller
 
-Supports up to 8 game controllers simultaneously.
+Supports up to 8 game controllers simultaneously. When a controller is disconnected, the controllers after it move down one index.
+
+### `ANY_CONTROLLER`
+
+```cpp
+constexpr uint32_t ANY_CONTROLLER = UINT32_MAX;
+```
+
+Pass `ANY_CONTROLLER` as the controller index to read all connected controllers. A button is active if it is active on any controller. Axes and sticks return the value that is farthest from the center.
+
+Use it for single-player games, so the player can use any controller.
 
 ### ControllerButton Enum
 
@@ -160,6 +178,9 @@ Supports up to 8 game controllers simultaneously.
 | `ControllerButton::LeftShoulder` | Left bumper |
 | `ControllerButton::RightShoulder` | Right bumper |
 | `ControllerButton::DPadUp/Down/Left/Right` | D-pad directions |
+| `ControllerButton::Misc1` | Extra button (for example, Share or Capture) |
+| `ControllerButton::LeftPaddle1/2`, `RightPaddle1/2` | Back paddles |
+| `ControllerButton::TouchPad` | Touchpad press |
 
 ### ControllerAxis Enum
 
@@ -172,7 +193,16 @@ Supports up to 8 game controllers simultaneously.
 | `ControllerAxis::LeftTrigger` | Left trigger |
 | `ControllerAxis::RightTrigger` | Right trigger |
 
+### ControllerStick Enum
+
+| Value | Description |
+|-------|-------------|
+| `ControllerStick::Left` | Left analog stick |
+| `ControllerStick::Right` | Right analog stick |
+
 ### Controller Functions
+
+In all of these functions, `index` is the controller index or `ANY_CONTROLLER`.
 
 #### `get_controller_button`
 
@@ -204,7 +234,17 @@ Check if a controller button was released since the last update.
 float get_controller_axis(uint32_t index, asw::input::ControllerAxis axis);
 ```
 
-Get the value of a controller axis (between `-1.0f` and `1.0f`).
+Get the value of a controller axis, with the dead zone applied. Sticks go from `-1.0f` to `1.0f`, and triggers go from `0.0f` to `1.0f`.
+
+Stick axes use a radial dead zone, so a stick that is pushed straight along one axis reads zero on the other axis. Values past the dead zone are rescaled to start from zero.
+
+#### `get_controller_stick`
+
+```cpp
+Vec2<float> get_controller_stick(uint32_t index, asw::input::ControllerStick stick);
+```
+
+Get the position of a controller stick, with the dead zone applied. The length of the result is `1` or less. Use this for movement in all directions, because it keeps diagonal speed the same as straight speed.
 
 #### `set_controller_dead_zone`
 
@@ -212,7 +252,7 @@ Get the value of a controller axis (between `-1.0f` and `1.0f`).
 void set_controller_dead_zone(uint32_t index, float dead_zone);
 ```
 
-Set the joystick deadzone for a controller (default: `0.25f`).
+Set the dead zone of a controller, from `0.0f` to `1.0f` (default: `0.25f`). Values are clamped to the range `0.0f` to `0.99f`. Pass `ANY_CONTROLLER` to set it for all connected controllers.
 
 #### `get_controller_count`
 
@@ -229,6 +269,78 @@ std::string get_controller_name(uint32_t index);
 ```
 
 Get the name of a controller.
+
+## Constants
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `NUM_KEYS` | `SDL_SCANCODE_COUNT` | Number of keys |
+| `NUM_MOUSE_BUTTONS` | `6` | Number of mouse buttons |
+| `NUM_CURSORS` | `SDL_SYSTEM_CURSOR_COUNT` | Number of system cursors |
+| `NUM_CONTROLLER_BUTTONS` | `SDL_GAMEPAD_BUTTON_COUNT` | Number of controller buttons |
+| `NUM_CONTROLLER_AXES` | `SDL_GAMEPAD_AXIS_COUNT` | Number of controller axes |
+| `ANY_CONTROLLER` | `UINT32_MAX` | Controller index that reads all connected controllers. See [ANY_CONTROLLER](#any-controller) |
+
+## Last Used Device
+
+### InputDevice Enum
+
+| Value | Description |
+|-------|-------------|
+| `InputDevice::KeyboardMouse` | Keyboard and mouse |
+| `InputDevice::Controller` | A game controller |
+
+#### `get_last_device`
+
+```cpp
+InputDevice get_last_device();
+```
+
+Get the device that the player used most recently. Use it to show keyboard or controller prompts. Key presses, mouse clicks and mouse motion count as `KeyboardMouse`. Button presses, and axes past the dead zone, count as `Controller`. The default is `KeyboardMouse`.
+
+## Simulated Input
+
+These functions queue the same events that a real device sends. The game gets them through the normal input path on the next `asw::core::update()`. Use them to script demos or automated test runs.
+
+#### `simulate_key_down`
+
+```cpp
+void simulate_key_down(asw::input::Key key);
+```
+
+Simulate a key press.
+
+#### `simulate_key_up`
+
+```cpp
+void simulate_key_up(asw::input::Key key);
+```
+
+Simulate a key release.
+
+#### `simulate_mouse_move`
+
+```cpp
+void simulate_mouse_move(const asw::Vec2<float>& position);
+```
+
+Simulate a mouse move. `position` is in logical (render) coordinates, the same space that `get_mouse()` reports.
+
+#### `simulate_mouse_button_down`
+
+```cpp
+void simulate_mouse_button_down(asw::input::MouseButton button);
+```
+
+Simulate a mouse button press.
+
+#### `simulate_mouse_button_up`
+
+```cpp
+void simulate_mouse_button_up(asw::input::MouseButton button);
+```
+
+Simulate a mouse button release.
 
 ## Actions
 
@@ -263,8 +375,10 @@ if (asw::input::get_mouse_button_down(asw::input::MouseButton::Left)) {
 }
 
 // Controller
-float move_x = asw::input::get_controller_axis(0, asw::input::ControllerAxis::LeftX);
-if (asw::input::get_controller_button_down(0, asw::input::ControllerButton::A)) {
+auto move = asw::input::get_controller_stick(asw::input::ANY_CONTROLLER,
+                                            asw::input::ControllerStick::Left);
+if (asw::input::get_controller_button_down(asw::input::ANY_CONTROLLER,
+                                           asw::input::ControllerButton::A)) {
   // jump
 }
 
@@ -272,4 +386,10 @@ if (asw::input::get_controller_button_down(0, asw::input::ControllerButton::A)) 
 if (!asw::input::get_text_input().empty()) {
   // handle typed text
 }
+
+// Scripted input, read on the next asw::core::update()
+asw::input::simulate_key_down(asw::input::Key::Space);
+
+// Show the right button prompts
+bool use_pad = asw::input::get_last_device() == asw::input::InputDevice::Controller;
 ```

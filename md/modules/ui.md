@@ -2,8 +2,12 @@
 
 Retained-mode UI widget system with theming, focus navigation, and input handling.
 
-**Header:** `#include <asw/modules/ui/ui.h>`
+**Header:** `#include <asw/modules/ui/ui.h>`\
 **Namespace:** `asw::ui`
+
+<PlayableExample name="ui" />
+
+*From the [ui example](../examples#ui).*
 
 ## Widget
 
@@ -167,6 +171,7 @@ class FocusManager;
 | `rebuild(Context& ctx, Widget& root)` | Rebuild the focusable widget list from the tree |
 | `focused()` | Get the currently focused widget (or `nullptr`) |
 | `set_focus(Context& ctx, Widget* w)` | Set focus to a specific widget |
+| `forget_focus()` | Clear the focused widget without notifying it. Use this when the widget was removed from the tree and can already be destroyed |
 | `focus_next(Context& ctx)` | Move focus to the next widget |
 | `focus_prev(Context& ctx)` | Move focus to the previous widget |
 | `focus_dir(Context& ctx, int dx, int dy)` | Move focus in a 2D direction |
@@ -191,7 +196,8 @@ class Root;
 | Method | Description |
 |--------|-------------|
 | `set_size(float w, float h)` | Set the size of the root panel |
-| `rebuild_focus_if_needed()` | Rebuild the focus list if the tree has changed |
+| `rebuild_focus_if_needed()` | Rebuild the focus list if `need_focus_rebuild` is set. `update()` and each dispatched event also check the tree, so you seldom need to call this |
+| `validate()` | Remove the hover, capture and focus pointers to widgets that are no longer in the tree, and refresh the focus list |
 | `hit_test(Widget& w, const Vec2<float>& pos)` | Find the deepest widget at a position |
 | `dispatch_pointer(const UIEvent& e)` | Route a pointer event to the appropriate widget |
 | `dispatch_to_focused(const UIEvent& e)` | Dispatch an event to the focused widget |
@@ -251,7 +257,7 @@ class Button : public Widget;
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `on_click` | `std::function<void()>` | Callback invoked on click |
+| `on_click` | `std::function<void()>` | Callback invoked on a left click, or when the button is activated with the keyboard |
 | `padding` | `float` | Padding inside the button on all sides (default: `0`) |
 | `font` | `asw::Font` | Font for the button text |
 | `text` | `std::string` | Button label text |
@@ -276,6 +282,8 @@ class InputBox : public Widget;
 | `font` | `asw::Font` | Font for the input text |
 | `value` | `std::string` | Current text value |
 | `placeholder` | `std::string` | Placeholder text shown when empty |
+
+The box accepts only a left click. Backspace and Delete remove whole UTF-8 characters. You can change `value` directly; the cursor is moved back into range on the next event. An `InputBox` cannot be copied. If it is destroyed while it has focus, text input stops.
 
 ## Example
 

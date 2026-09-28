@@ -2,7 +2,7 @@
 
 Display and window management routines.
 
-**Header:** `#include <asw/modules/display.h>`
+**Header:** `#include <asw/modules/display.h>`\
 **Namespace:** `asw::display`
 
 ## Functions
@@ -85,7 +85,7 @@ Returns the logical size of the window. This may differ from the actual size if 
 asw::Vec2<float> get_scale();
 ```
 
-Returns the scale of the window (logical size / actual size).
+Returns how many output pixels one logical pixel covers, after letterboxing. For example, `2.0` means that the game is drawn at twice its logical size.
 
 ### `set_render_target`
 
@@ -110,7 +110,7 @@ void clear();
 void clear(const asw::Color& color);
 ```
 
-Clear the window. Optionally specify a color to clear to.
+Clear the window. The first overload clears to black. The second clears to `color`.
 
 ### `present`
 
@@ -126,7 +126,19 @@ Present the rendered frame to the window.
 void set_blend_mode(asw::BlendMode mode);
 ```
 
-Set the blend mode of the renderer.
+Set the blend mode used to draw primitives, such as rectangles, lines and circles. The default is `BlendMode::Blend`, so colors with alpha are transparent. To set the blend mode of a texture, use [`asw::draw::set_blend_mode`](./draw#set-blend-mode).
+
+### `screenshot`
+
+```cpp
+bool screenshot(const std::string& path);
+```
+
+Save what was drawn this frame to a PNG file. Call it after you draw and before `present()`, for example at the end of a scene's `draw()`. Returns `true` if the file was written, and `false` if the frame could not be read or the file could not be written. Returns `false` when there is no SDL renderer (for example, after `init_opengl`).
+
+On high-density screens (for example, macOS Retina), the image is at pixel size, not logical size, because ASW draws at the full pixel density of the screen.
+
+This function works with the dummy video driver (`SDL_VIDEO_DRIVER=dummy`), so scripted runs can capture frames without a window on screen.
 
 ### `warp_mouse`
 
@@ -153,5 +165,6 @@ asw::display::set_icon("icon.png");
 // Game loop
 asw::display::clear();
 // draw here...
+asw::display::screenshot("frame.png"); // optional
 asw::display::present();
 ```

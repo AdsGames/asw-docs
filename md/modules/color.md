@@ -2,7 +2,7 @@
 
 RGBA color struct with utility methods and named color constants.
 
-**Header:** `#include <asw/modules/color.h>`
+**Header:** `#include <asw/modules/color.h>`\
 **Namespace:** `asw`
 
 ## Color Struct
@@ -36,7 +36,15 @@ Create a color from float values (0.0 - 1.0).
 static Color from_hex(const std::string& hex);
 ```
 
-Create a color from a hex string. Supports `#RRGGBB` and `#RRGGBBAA` formats. Returns black on invalid input.
+Create a color from a hex string. Supports `#RRGGBB` and `#RRGGBBAA` formats. Returns opaque black on invalid input, including hex digits that are not valid.
+
+#### `to_channel`
+
+```cpp
+static uint8_t to_channel(float value);
+```
+
+Round a 0 - 255 channel value and clamp it into range. Use it instead of `static_cast<uint8_t>`, which is undefined for values out of range.
 
 ### Methods
 
@@ -46,7 +54,7 @@ Create a color from a hex string. Supports `#RRGGBB` and `#RRGGBBAA` formats. Re
 Color lighten(float percentage) const;
 ```
 
-Lighten the color by a percentage (0.0 - 1.0).
+Lighten the color by a percentage (0.0 - 1.0). Values outside this range are clamped. Alpha does not change.
 
 #### `darken`
 
@@ -54,7 +62,15 @@ Lighten the color by a percentage (0.0 - 1.0).
 Color darken(float percentage) const;
 ```
 
-Darken the color by a percentage (0.0 - 1.0).
+Darken the color by a percentage (0.0 - 1.0). Values outside this range are clamped. Alpha does not change.
+
+#### `lerp`
+
+```cpp
+Color lerp(const Color& color, float t) const;
+```
+
+Mix toward another color, including alpha. `t` goes from `0.0` (this color) to `1.0` (`color`). Values outside this range are clamped.
 
 #### `blend`
 
@@ -124,4 +140,7 @@ auto lighter = asw::color::blue.lighten(0.3f);
 auto darker = asw::color::red.darken(0.5f);
 auto gray = asw::color::green.grayscale();
 auto inverted = asw::color::yellow.invert();
+
+// Fade from red to transparent blue over a particle's life
+auto fade = asw::color::red.lerp(asw::color::blue.with_alpha(0), age / lifetime);
 ```
