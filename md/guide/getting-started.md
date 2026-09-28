@@ -157,7 +157,7 @@ The page is `index.html`. It fills the window, shows the loading progress, and s
 | `BACKGROUND` | `#0a0a0a` | Page color |
 | `OUTPUT_NAME` | `index` | Page file name, without `.html` |
 | `ASSETS` | none | Folders to preload at `/assets`. You can give more than one |
-| `SHELL` | the ASW page | Your own HTML shell. It must contain `{{{ SCRIPT }}}`, and can have a `#canvas` and a `#status` |
+| `SHELL` | the ASW page | Your own HTML shell. It must contain <code v-pre>{{{ SCRIPT }}}</code>, and can have a `#canvas` and a `#status` |
 | `PRE_JS` | none | More `--pre-js` files |
 
 Then build with the Emscripten toolchain and serve the output folder. Browsers do not load WebAssembly from `file://` addresses.
