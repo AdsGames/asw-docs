@@ -13,7 +13,7 @@ Core routines including initialization and the main loop.
 void init(int width, int height, int scale = 1);
 ```
 
-Initializes the core module. This must be called before using any other ASW functionality.
+Initializes the core module. This must be called before using any other ASW functionality. It loads the [config file](./config) named by `ASW_CONFIG`, if it is set, before it opens the window.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|

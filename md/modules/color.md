@@ -38,6 +38,14 @@ static Color from_hex(const std::string& hex);
 
 Create a color from a hex string. Supports `#RRGGBB` and `#RRGGBBAA` formats. Returns opaque black on invalid input, including hex digits that are not valid.
 
+#### `to_fcolor`
+
+```cpp
+FColor to_fcolor() const;
+```
+
+Convert to an `FColor`, with each channel from `0.0` to `1.0`. `asw::FColor` is an alias of `SDL_FColor`, for SDL functions that take float colors.
+
 #### `to_channel`
 
 ```cpp

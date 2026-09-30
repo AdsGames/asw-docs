@@ -45,7 +45,15 @@ Set the icon to display on the window. Silently fails if the file does not exist
 void set_fullscreen(bool fullscreen);
 ```
 
-Set the window to fullscreen or windowed mode.
+Set the window to fullscreen or windowed mode. If the [config](./config) sets `display.fullscreen`, the config wins and this function has no effect.
+
+### `is_fullscreen`
+
+```cpp
+bool is_fullscreen();
+```
+
+Returns `true` if the window is fullscreen. It reads the window itself, so it is correct when the config sets `display.fullscreen`. Use it to show the real state in a settings menu.
 
 ### `set_resolution`
 

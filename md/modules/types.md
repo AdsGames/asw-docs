@@ -62,6 +62,24 @@ Sets how a texture is filtered when it is scaled. Pass it to `asw::draw::set_sca
 
 The values map to `SDL_SCALEMODE_NEAREST` and `SDL_SCALEMODE_LINEAR`.
 
+## Falloff Enum
+
+```cpp
+enum class Falloff {
+  Linear,
+  Smooth,
+  Quadratic,
+};
+```
+
+How a gradient or light fades from its center to its edge. Used by [`create_radial_gradient()`](./assets#create-radial-gradient), [`easing::falloff()`](./easing#falloff) and [lights](./lighting#light).
+
+| Value | Description |
+|-------|-------------|
+| `Linear` | Even fade to the edge |
+| `Smooth` | Soft at the center and at the edge |
+| `Quadratic` | Bright core that drops off quickly, closer to a real light |
+
 ## TextJustify Enum
 
 ```cpp

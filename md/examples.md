@@ -3,6 +3,7 @@
 The ASW repository has an example program for each part of the library. You can play each one here in your browser: press **Play**, then click the game to give it the keyboard. The examples are the same C++ programs as on desktop, built to WebAssembly with Emscripten.
 
 <div class="example-grid">
+  <a href="#advanced-lighting"><img src="/play/advanced_lighting/screenshot.png" alt="Advanced lighting example" loading="lazy"><span>Advanced lighting</span></a>
   <a href="#lighting"><img src="/play/lighting/screenshot.png" alt="Lighting example" loading="lazy"><span>Lighting</span></a>
   <a href="#particles"><img src="/play/particles/screenshot.png" alt="Particles example" loading="lazy"><span>Particles</span></a>
   <a href="#scenes"><img src="/play/scenes/screenshot.png" alt="Scenes example" loading="lazy"><span>Scenes</span></a>
@@ -11,6 +12,7 @@ The ASW repository has an example program for each part of the library. You can 
   <a href="#primitives"><img src="/play/primitives/screenshot.png" alt="Primitives example" loading="lazy"><span>Primitives</span></a>
   <a href="#text"><img src="/play/text/screenshot.png" alt="Text example" loading="lazy"><span>Text</span></a>
   <a href="#ui"><img src="/play/ui/screenshot.png" alt="UI example" loading="lazy"><span>UI</span></a>
+  <a href="#overlays"><img src="/play/overlays/screenshot.png" alt="Overlays example" loading="lazy"><span>Overlays</span></a>
   <a href="#easing"><img src="/play/easing/screenshot.png" alt="Easing example" loading="lazy"><span>Easing</span></a>
   <a href="#keyboard"><img src="/play/keyboard/screenshot.png" alt="Keyboard example" loading="lazy"><span>Keyboard</span></a>
   <a href="#mouse"><img src="/play/mouse/screenshot.png" alt="Mouse example" loading="lazy"><span>Mouse</span></a>
@@ -50,11 +52,31 @@ In the browser, add `?autorun` to the address of an example. The screenshots on 
 
 ## Graphics
 
+### Advanced lighting
+
+<PlayableExample name="advanced_lighting" title="Advanced lighting" />
+
+A dark level lit with the [lighting module](./modules/lighting). The camera scrolls, and the lights stay in place in the world.
+
+- `asw::lighting::LightMap` with a camera
+- Point lights and spot lights, with `Linear`, `Smooth` and `Quadratic` falloff
+- Flicker and pulse on lights
+- Occluders with `Cast` and `Visibility` shadows
+- `add_glow()` for sprites that give off light, such as lava
+- `asw::lighting::AmbientCycle` for day and night
+- `asw::lighting::TileLight` for light that spreads across a tile grid
+- `asw::geometry::visibility()` as a field of view
+- `asw::draw::polygon_fill()`, `polygon()` and `triangle_fill()`
+
+**Controls:** <kbd>WASD</kbd> / arrows move. The mouse aims the flashlight. Left click drops a colored light. <kbd>F</kbd> toggles the flashlight. <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> select no shadows, cast shadows and visibility shadows. <kbd>4</kbd> selects the next falloff. <kbd>Q</kbd> toggles flicker and pulse. <kbd>E</kbd> toggles glows. <kbd>N</kbd> toggles the day and night cycle. <kbd>T</kbd> toggles tile lighting. <kbd>V</kbd> shows the field of view. <kbd>L</kbd> toggles lighting.
+
+[View source](https://github.com/adsgames/asw/tree/main/examples/advanced_lighting) · [Lighting](./modules/lighting) · [Geometry](./modules/geometry)
+
 ### Lighting
 
 <PlayableExample name="lighting" />
 
-Render targets, blend modes and sprite drawing. A light map is made from radial gradients drawn with `BlendMode::Add` into a texture. The light map is then drawn over the scene with `BlendMode::Modulate`.
+Render targets, blend modes and sprite drawing, without the lighting module. A light map is made from radial gradients drawn with `BlendMode::Add` into a texture. The light map is then drawn over the scene with `BlendMode::Modulate`.
 
 - `asw::assets::create_texture()` and `asw::display::set_render_target()` to draw textures at runtime
 - `asw::draw::set_scale_mode()`: `Nearest` and `Linear` on the same art
@@ -87,6 +109,7 @@ Fire, fountain, smoke, snow and a glowing trail that follows the mouse.
 
 - `asw::draw::point()`, `line()`, `rect()`, `rect_fill()`, `circle()` and `circle_fill()`
 - `asw::draw::rect()` with a thickness, and `rect_fill_rotate()`
+- `asw::draw::triangle_fill()`, `polygon()` and `polygon_fill()` with a concave shape
 - `asw::draw::text()` and `text_shadow()`
 - `asw::color` constants and `Color` helpers (`lighten`, `darken`, `with_alpha`)
 - Alpha blending of shapes that overlap
@@ -113,7 +136,7 @@ Fire, fountain, smoke, snow and a glowing trail that follows the mouse.
 
 <PlayableExample name="easing" />
 
-Each cell plots one `asw::easing` function as a curve, with a dot that moves along it. The bar under each curve moves by the eased value, so you can easily see overshoot and bounce.
+Each cell plots one `asw::easing` function as a curve, with `smoothstep` last, with a dot that moves along it. The bar under each curve moves by the eased value, so you can easily see overshoot and bounce.
 
 **Controls:** <kbd>Space</kbd> pauses. <kbd>Up</kbd> / <kbd>Down</kbd> change the speed.
 
@@ -165,6 +188,20 @@ A scrolling world.
 - `asw::dialog::request_file()` and `take_file()` for a native file chooser, and `confirm()` and `warn()` message boxes
 
 [View source](https://github.com/adsgames/asw/tree/main/examples/ui) · [UI Widgets](./modules/ui) · [Dialog](./modules/dialog)
+
+### Overlays
+
+<PlayableExample name="overlays" />
+
+- `Widget::anchor` pins buttons to the corners of the screen
+- `Root::toast()` for short messages, with the theme `toast.anchor` set to `TopRight`
+- `Root::open_modal()` with `add_text()`, `add_button()` and `on_close`
+- `asw::util::open_url()` to open a web page
+- `asw::assets::write_save()` and `read_save()` count the runs, also in the browser
+
+**Controls:** Mouse clicks buttons. Arrows / D-pad move focus, and <kbd>Enter</kbd> / <kbd>A</kbd> presses. <kbd>Escape</kbd> / <kbd>B</kbd> closes the modal.
+
+[View source](https://github.com/adsgames/asw/tree/main/examples/overlays) · [UI Widgets](./modules/ui#modal) · [Assets](./modules/assets#read-save-write-save)
 
 ## Audio
 
@@ -232,6 +269,9 @@ Shows each connected controller and lights up the sticks, triggers and buttons t
 - `get_controller_button()` and `get_controller_button_down()`
 - `ANY_CONTROLLER` to read all connected controllers at once
 - `set_controller_dead_zone()`
+- `rumble_controller()` and `rumble_controller_triggers()`, with `controller_has_rumble()` and `controller_has_trigger_rumble()`
 - `get_last_device()` to tell keyboard players and controller players apart
+
+**Controls:** <kbd>A</kbd> makes a short rumble. The trigger motors rumble as hard as you pull each trigger.
 
 [View source](https://github.com/adsgames/asw/tree/main/examples/controller) · [Input](./modules/input#game-controller)

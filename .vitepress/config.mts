@@ -43,6 +43,7 @@ export default defineConfig({
           { text: "Types", link: "/modules/types" },
           { text: "Color", link: "/modules/color" },
           { text: "Display", link: "/modules/display" },
+          { text: "Config", link: "/modules/config" },
         ],
       },
       {
@@ -53,6 +54,7 @@ export default defineConfig({
           { text: "Camera", link: "/modules/camera" },
           { text: "Particles", link: "/modules/particles" },
           { text: "Easing", link: "/modules/easing" },
+          { text: "Lighting", link: "/modules/lighting" },
         ],
       },
       {

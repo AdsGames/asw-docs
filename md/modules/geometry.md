@@ -155,6 +155,62 @@ Add the result of `get_push_out` to the position of the rectangle to stop a movi
 | `asw::Vec3i` | `Vec3<int>` |
 | `asw::Quadf` | `Quad<float>` |
 | `asw::Quadi` | `Quad<int>` |
+| `asw::Polygonf` | `Polygon<float>` |
+
+## Polygon
+
+```cpp
+template <typename T>
+using Polygon = std::vector<Vec2<T>>;
+```
+
+A polygon, as its corners in order. The last corner joins the first. Draw one with [`draw::polygon()`](./draw#polygon) and [`draw::polygon_fill()`](./draw#polygon-fill).
+
+## Polygon and Ray Functions
+
+**Namespace:** `asw::geometry`
+
+| Function | Return | Description |
+|----------|--------|-------------|
+| `signed_area(const Polygon<T>& polygon)` | `Vec2<T>::Real` | Area of the polygon. Positive when the corners go clockwise on screen, negative when they go anticlockwise |
+| `bounds(const Polygon<T>& polygon)` | `Quad<T>` | Smallest rectangle that holds every corner. An empty rectangle at `0, 0` for no corners |
+| `point_in_triangle(point, a, b, c)` | `bool` | `true` if `point` is inside the triangle `a`, `b`, `c`. Points on an edge are inside |
+| `ray_hit(origin, direction, a, b)` | `std::optional<float>` | Where a ray hits the segment `a`-`b`, as a distance along the ray in lengths of `direction`. Nothing if the ray misses or runs along the segment. `direction` does not need to be normalized |
+
+### `visibility`
+
+```cpp
+Polygonf visibility(const Vec2f& from, float radius, const std::vector<Polygonf>& occluders,
+                    float direction = 0.0F, float cone = 0.0F);
+
+void visibility(Polygonf& result, const Vec2f& from, float radius,
+                const std::vector<Polygonf>& occluders,
+                float direction = 0.0F, float cone = 0.0F);
+
+void visibility(Polygonf& result, const Vec2f& from, float radius,
+                const std::vector<Polygonf>& occluders,
+                const std::vector<Quadf>& occluder_bounds,
+                float direction = 0.0F, float cone = 0.0F);
+```
+
+Find the area that can be seen from a point, e.g. for a field of view or for light. Rays stop at the first polygon edge, and at a square of half size `radius` around `from`. The result is the edge of the visible area, in angle order. It does not include `from`.
+
+| Parameter | Description |
+|-----------|-------------|
+| `from` | The point to look from |
+| `radius` | How far to look |
+| `occluders` | Polygons that block the view |
+| `direction` | Direction to look, in radians, when `cone` is set |
+| `cone` | Width of the view, in radians. `0` looks all round |
+| `result` | Replaced with the visible area. Keep it between calls, so the function does not allocate each time |
+| `occluder_bounds` | The `bounds()` of each occluder, in the same order. Calculate them once per frame when many points use the same occluders |
+
+```cpp
+std::vector<asw::Polygonf> walls = {{{100, 100}, {160, 100}, {160, 140}, {100, 140}}};
+asw::Polygonf view;
+asw::geometry::visibility(view, player, 200.0F, walls);
+asw::draw::polygon_fill(view, asw::color::white.with_alpha(40));
+```
 
 ## Example
 

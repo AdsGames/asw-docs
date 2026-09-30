@@ -25,6 +25,25 @@ std::string get_save_path(const std::string& org, const std::string& app);
 
 Get a writable folder for save files and settings, unique to the organization and application. The folder is created if it does not exist. The path ends in a path separator. Returns an empty string if the path cannot be found.
 
+In web builds, files in this folder are lost when the page reloads. Use `read_save` and `write_save` for data that must stay.
+
+### `read_save` / `write_save`
+
+```cpp
+std::string read_save(const std::string& org, const std::string& app, const std::string& name);
+bool write_save(const std::string& org, const std::string& app, const std::string& name,
+                const std::string& data);
+```
+
+Read and write save data, e.g. progress or settings as JSON. `write_save` replaces the data that was saved with the same `name`, and returns `true` if it was saved. `read_save` returns an empty string if nothing is saved.
+
+Desktop builds keep the data in a file in `get_save_path(org, app)`. Web builds keep it in the browser's `localStorage`, so it stays after the page reloads.
+
+```cpp
+int runs = std::atoi(asw::assets::read_save("adsgames", "my_game", "runs.txt").c_str()) + 1;
+asw::assets::write_save("adsgames", "my_game", "runs.txt", std::to_string(runs));
+```
+
 ## Textures
 
 ### `load_texture`
@@ -67,16 +86,18 @@ Create a blank texture with the given dimensions. Useful for render targets.
 ### `create_radial_gradient`
 
 ```cpp
-asw::Texture create_radial_gradient(int size, asw::Color inner, asw::Color outer);
+asw::Texture create_radial_gradient(int size, asw::Color inner, asw::Color outer,
+                                    asw::Falloff falloff = asw::Falloff::Smooth);
 ```
 
-Create a square texture with a radial gradient. The color changes smoothly from `inner` at the center to `outer` at the edge and in the corners. The texture has linear scaling and a blend mode set. Useful for lights.
+Create a square texture with a radial gradient. The color changes from `inner` at the center to `outer` at the edge and in the corners. The texture has linear scaling and a blend mode set. Useful for lights.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `size` | `int` | The width and height of the texture |
 | `inner` | `asw::Color` | The color at the center |
 | `outer` | `asw::Color` | The color at the edge and in the corners |
+| `falloff` | `asw::Falloff` | How the color changes from the center to the edge (default: `Smooth`). See [`Falloff`](./types#falloff-enum) |
 
 ## Fonts
 

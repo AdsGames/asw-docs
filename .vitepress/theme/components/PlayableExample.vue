@@ -85,7 +85,6 @@ watch(playing, (now) => {
         allow="autoplay; fullscreen; gamepad"
         @load="focusGame"
       />
-      <div v-if="playing && status" class="status" role="status">{{ status }}</div>
       <template v-else>
         <img
           v-if="!posterFailed"
@@ -99,6 +98,7 @@ watch(playing, (now) => {
           Play {{ label }}
         </button>
       </template>
+      <div v-if="playing && status" class="status" role="status">{{ status }}</div>
     </div>
 
     <figcaption class="toolbar">

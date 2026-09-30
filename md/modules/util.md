@@ -26,10 +26,10 @@ Get the width and height of a texture as a `Vec2<float>`.
 ### `get_text_size`
 
 ```cpp
-asw::Vec2<int> get_text_size(const asw::Font& font, const std::string& text);
+asw::Vec2<int> get_text_size(const asw::Font& font, std::string_view text);
 ```
 
-Get the rendered size of a string with the given font. Results are cached.
+Get the rendered size of a string with the given font. Results are cached. When the cache is full, the least recently used sizes are removed.
 
 ### `get_font_height`
 
@@ -38,6 +38,14 @@ int get_font_height(const asw::Font& font);
 ```
 
 Get the height of one line of text in a font, in pixels. Returns `0` if the font is not loaded.
+
+### `open_url`
+
+```cpp
+bool open_url(const std::string& url);
+```
+
+Open a web page in the player's browser, e.g. a login or store page. Web builds open it in a new tab. Returns `true` if the browser was asked to open it.
 
 ### `clear_text_size_cache`
 

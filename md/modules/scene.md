@@ -58,7 +58,7 @@ Called each frame. The default implementation sorts objects by `z_index` and dra
 virtual void cleanup();
 ```
 
-Called when the game switches away from this scene. Removes all objects by default.
+Called when the game switches away from this scene. Removes all objects by default, including objects from `create_object()` that are not added yet.
 
 ### Object Management
 

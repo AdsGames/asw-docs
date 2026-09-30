@@ -205,6 +205,37 @@ void circle_fill(const asw::Vec2<float>& position, float radius, asw::Color colo
 
 Draw a filled circle.
 
+### `triangle_fill`
+
+```cpp
+void triangle_fill(const asw::Vec2<float>& a, const asw::Vec2<float>& b,
+                   const asw::Vec2<float>& c, asw::Color color);
+```
+
+Draw a filled triangle.
+
+### `polygon`
+
+```cpp
+void polygon(const asw::Polygonf& points, asw::Color color);
+```
+
+Draw the outline of a polygon. The last point joins the first. See [`Polygon`](./geometry#polygon).
+
+### `polygon_fill`
+
+```cpp
+void polygon_fill(const asw::Polygonf& points, asw::Color color);
+```
+
+Draw a filled polygon. The corners can go either way round. The polygon can be concave, but its edges must not cross.
+
+```cpp
+asw::Polygonf arrow = {{0, 10}, {20, 10}, {20, 0}, {35, 15}, {20, 30}, {20, 20}, {0, 20}};
+asw::draw::polygon_fill(arrow, asw::color::orange);
+asw::draw::polygon(arrow, asw::color::white);
+```
+
 ## Texture Utilities
 
 ### `set_blend_mode`

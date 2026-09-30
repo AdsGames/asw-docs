@@ -28,6 +28,26 @@ class Widget;
 | `focus_ring` | `bool` | `true` | Draw the theme focus ring while the widget has visible focus. Turn off for widgets that show focus themselves |
 | `parent` | `Widget*` | `nullptr` | Pointer to the parent widget |
 | `transform` | `asw::Quad<float>` | | Position and size |
+| `anchor` | `Anchor` | `None` | Pin the widget to a point of its parent, e.g. `BottomRight` for a corner button. The parent places it at each layout, so it stays in place when the screen or its own size changes. `Stack` and `Grid` place their children themselves, and ignore it |
+| `anchor_margin` | `asw::Vec2<float>` | `{0, 0}` | Space between an anchored widget and the edges of its parent |
+
+### Anchor Enum
+
+```cpp
+enum class Anchor {
+  None,
+  TopLeft, Top, TopRight,
+  Left, Center, Right,
+  BottomLeft, Bottom, BottomRight,
+};
+```
+
+```cpp
+auto& settings = ui.root.add_child<asw::ui::Button>();
+settings.set_text("Settings", true);
+settings.anchor = asw::ui::Anchor::BottomRight;
+settings.anchor_margin = {20.0f, 20.0f};
+```
 
 ### Methods
 
@@ -191,6 +211,8 @@ struct Theme;
 | `input` | `InputStyle` | | Default input box style |
 | `slider` | `SliderStyle` | | Default slider style |
 | `focus_ring` | `FocusRingStyle` | | Focus ring style |
+| `toast` | `ToastStyle` | | Style of messages from `Root::toast` |
+| `modal` | `ModalStyle` | | Style of modals from `Root::open_modal` |
 | `padding` | `float` | `10.0` | Default padding |
 | `gap` | `float` | `8.0` | Default gap between elements |
 | `sound_move` | `asw::Sample` | `nullptr` | Played on the `Ui` sound bus when navigation moves focus |
@@ -265,6 +287,32 @@ The ring drawn around the focused widget during keyboard or controller navigatio
 | `color` | `asw::Color` | `{255, 200, 80}` | Ring color |
 | `width` | `float` | `1` | Ring width in pixels. `0` draws no ring |
 | `offset` | `float` | `2` | Gap between the widget and the ring, in pixels |
+
+### ToastStyle
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bg` | `asw::Color` | `{20, 20, 20, 230}` | Fill behind each message |
+| `text` | `asw::Color` | white | Message text color |
+| `border` / `border_width` | `asw::Color` / `float` | none / `0` | Outline. No outline when the width is `0` |
+| `padding` | `float` | `12` | Space around the text in each message |
+| `margin` | `float` | `16` | Space from the edge of the screen to the first message |
+| `gap` | `float` | `8` | Space between messages |
+| `seconds` | `float` | `3` | How long a message stays, from when it shows |
+| `fade_seconds` | `float` | `0.25` | How long a message takes to fade out at the end |
+| `max_visible` | `std::size_t` | `3` | Messages on screen at the same time. The others wait |
+| `anchor` | `Anchor` | `Top` | Where messages show. `Top`, `TopLeft` and `TopRight` stack down from the top. `Bottom`, `BottomLeft` and `BottomRight` stack up from the bottom |
+
+### ModalStyle
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `dim` | `asw::Color` | `{0, 0, 0, 160}` | Color over the screen behind the modal |
+| `bg` | `asw::Color` | `{30, 30, 30}` | Fill of the modal |
+| `border` / `border_width` | `asw::Color` / `float` | none / `0` | Outline. No outline when the width is `0` |
+| `padding` | `float` | `20` | Space between the edge of the modal and its content |
+| `gap` | `float` | `12` | Space between its widgets |
+| `min_width` | `float` | `320` | Smallest width of the modal |
 
 ### Helpers
 
@@ -388,12 +436,39 @@ class Root;
 | `draw()` | Draw the UI tree, then the focus ring |
 | `focus(Widget& w, bool show = false)` | Focus a widget. It must be focusable and in this tree. If `show` is `true`, the focus ring is shown, as with keyboard navigation |
 | `clear_focus()` | Remove focus from every widget |
+| `toast(const std::string& text)` | Show a message for a few seconds, e.g. "Achievement unlocked". Messages wait in a queue when many arrive together |
+| `toast(Toast message)` | Show a message with its own icon, color or time |
+| `clear_toasts()` | Remove every message, shown or waiting |
+| `toast_count()` | Get the number of messages, shown or waiting |
+| `open_modal<T = Modal>(args...)` | Open a [modal](#modal) over the rest of the UI, and return it |
+| `has_modal()` | Returns `true` while a modal is open |
+| `close_modals()` | Close every open modal, top first |
 
 ```cpp
 if (!ui.update()) {
   // The UI did not use input this frame
   player.update();
 }
+```
+
+### Toast
+
+```cpp
+struct Toast;
+```
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `text` | `std::string` | | The message |
+| `icon` | `asw::Texture` | `nullptr` | Image before the text, e.g. an achievement icon |
+| `seconds` | `float` | `0` | How long the message stays. `0` uses the theme `toast.seconds` |
+| `color` | `std::optional<asw::Color>` | | Text color. Uses the theme `toast.text` when empty |
+
+Toasts use real time, so they fade out at the same speed when the game is paused.
+
+```cpp
+ui.toast("Saved");
+ui.toast({.text = "Achievement unlocked", .icon = trophy, .seconds = 5.0f});
 ```
 
 ## Layouts
@@ -475,6 +550,10 @@ class Label : public Widget;
 | `text` | `std::string` | | Text to display |
 | `justify` | `asw::TextJustify` | `Left` | Text justification |
 | `color` | `std::optional<asw::Color>` | | Text color. Uses the theme `text` color when empty |
+
+| Method | Description |
+|--------|-------------|
+| `set_text(const std::string& t, bool auto_size = false)` | Set the text. If `auto_size` is `true`, the label is sized to its text when it is measured, so layouts such as `VBox` and `Modal` give it room |
 
 ### Image
 
@@ -635,7 +714,41 @@ class InputBox : public Widget;
 | `placeholder` | `std::string` | Placeholder text shown when empty |
 | `style` | `std::optional<InputStyle>` | Style for this input box only. Uses the theme `input` style when empty |
 
-The box accepts only a left click. Backspace and Delete remove whole UTF-8 characters. You can change `value` directly; the cursor is moved back into range on the next event. An `InputBox` cannot be copied. If it is destroyed while it has focus, text input stops. `get_style(ctx)` returns the style the box draws with.
+When the text is wider than the box, it scrolls, so the cursor stays in view. Held keys repeat. The box accepts only a left click. Backspace and Delete remove whole UTF-8 characters. You can change `value` directly; the cursor is moved back into range on the next event. An `InputBox` cannot be copied. If it is destroyed while it has focus, text input stops. `get_style(ctx)` returns the style the box draws with.
+
+### Modal
+
+A box over the rest of the UI that the player must deal with first, e.g. a question or a login code.
+
+```cpp
+class Modal : public Stack;
+```
+
+Open a modal with `Root::open_modal()`. While it is open, the screen behind it is dimmed, and the pointer and focus only reach the modal. Its first focusable widget takes focus. When every modal is closed, focus goes back to where it was. The children stack top to bottom and are centered. The modal sizes itself to them, and is at least `min_width` wide.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `on_close` | `std::function<void()>` | | Called one time when the modal closes, from `close()` or back |
+| `close_on_back` | `bool` | `true` | Close when back is pressed. Turn off for a modal that the player must answer with one of its buttons |
+| `style` | `std::optional<ModalStyle>` | | Style for this modal only. Uses the theme `modal` style when empty |
+
+| Method | Description |
+|--------|-------------|
+| `add_text(const std::string& text, const asw::Font& font = nullptr)` | Add a line of text, sized to fit. Returns the `Label` |
+| `add_button(const std::string& text, std::function<void()> on_click)` | Add a button, sized to its text. Returns the `Button` |
+| `close()` | Call `on_close`, then remove the modal. You can call it from the modal's own buttons or from `on_close` |
+| `closed()` | Returns `true` after `close()` |
+| `get_style(const Context& ctx)` | Get the style the modal draws with |
+
+```cpp
+auto& modal = ui.open_modal();
+modal.add_text("Quit to the title screen?");
+modal.add_button("Quit", [&]() {
+  modal.close();
+  go_to_title();
+});
+modal.add_button("Cancel", [&]() { modal.close(); });
+```
 
 ## Example
 

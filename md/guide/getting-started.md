@@ -23,7 +23,7 @@ include(FetchContent)
 FetchContent_Declare(
   asw
   GIT_REPOSITORY https://github.com/adsgames/asw.git
-  GIT_TAG        v0.12.2 # or the latest tag
+  GIT_TAG        v0.13.0 # or the latest tag
 )
 FetchContent_MakeAvailable(asw)
 
@@ -34,7 +34,7 @@ target_link_libraries(my_game PRIVATE asw::asw)
 If your project already uses CPM, this also works:
 
 ```cmake
-CPMAddPackage("gh:adsgames/asw#v0.12.2")
+CPMAddPackage("gh:adsgames/asw#v0.13.0")
 ```
 
 When ASW is the top-level project and you give no build type, it builds `Release`.

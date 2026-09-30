@@ -19,6 +19,12 @@ All easing functions take a progress value `t` (0.0 - 1.0) and return the eased 
 |----------|-------------|
 | `linear(float t)` | No easing, linear interpolation |
 
+### Smoothstep
+
+| Function | Description |
+|----------|-------------|
+| `smoothstep(float t)` | Soft at both ends, `3t² - 2t³` |
+
 ### Quadratic
 
 | Function | Description |
@@ -73,6 +79,14 @@ All easing functions take a progress value `t` (0.0 - 1.0) and return the eased 
 | `ease_out_back(float t)` | Slight overshoot (ease out) |
 
 ## Convenience
+
+### `falloff`
+
+```cpp
+float falloff(float t, asw::Falloff mode);
+```
+
+Get how far a gradient or light has faded at a distance from its center. `t` goes from `0` at the center to `1` at the edge. The result goes from `0` at the center to `1` at the edge. See [`Falloff`](./types#falloff-enum).
 
 ### `ease`
 

@@ -42,7 +42,15 @@ Check if a key is currently held down.
 bool get_key_down(asw::input::Key key);
 ```
 
-Check if a key was pressed since the last update (single-frame).
+Check if a key was pressed since the last update (single-frame). A held key does not repeat.
+
+#### `get_key_repeat`
+
+```cpp
+bool get_key_repeat(asw::input::Key key);
+```
+
+Check if a key was pressed or auto-repeated since the last update. A held key repeats at the rate that the operating system sets. Use it for text editing and menu movement, and `get_key_down()` for game actions.
 
 #### `get_key_up`
 
@@ -65,6 +73,7 @@ Get the current keyboard state. Fields:
 | `pressed` | `std::array<bool, NUM_KEYS>` | Keys pressed this frame |
 | `released` | `std::array<bool, NUM_KEYS>` | Keys released this frame |
 | `down` | `std::array<bool, NUM_KEYS>` | Keys currently held |
+| `repeated` | `std::array<bool, NUM_KEYS>` | Keys pressed or auto-repeated this frame |
 | `any_pressed` | `bool` | Whether any key is pressed |
 | `last_pressed` | `int` | Last pressed key index |
 
@@ -150,7 +159,7 @@ Show or hide the mouse cursor. Use this if your game draws its own cursor.
 
 ## Game Controller
 
-Supports up to 8 game controllers simultaneously. When a controller is disconnected, the controllers after it move down one index.
+Each controller keeps its index while other controllers are disconnected. A controller that is connected again gets its old index back. ASW finds it by its serial number, or by its model if it has no serial number. A new controller takes the first empty index.
 
 ### `ANY_CONTROLLER`
 
@@ -252,7 +261,7 @@ Get the position of a controller stick, with the dead zone applied. The length o
 void set_controller_dead_zone(uint32_t index, float dead_zone);
 ```
 
-Set the dead zone of a controller, from `0.0f` to `1.0f` (default: `0.25f`). Values are clamped to the range `0.0f` to `0.99f`. Pass `ANY_CONTROLLER` to set it for all connected controllers.
+Set the dead zone of a controller, from `0.0f` to `1.0f` (default: `0.25f`). Values are clamped to the range `0.0f` to `0.99f`. Pass `ANY_CONTROLLER` to set it for all connected controllers, and for controllers that connect later.
 
 #### `get_controller_count`
 
@@ -260,7 +269,15 @@ Set the dead zone of a controller, from `0.0f` to `1.0f` (default: `0.25f`). Val
 int get_controller_count();
 ```
 
-Get the number of connected controllers.
+Get the number of controller indexes: the highest connected index plus one. Returns `0` when no controller is connected. An index below this count can be empty, so check it with `is_controller_connected()`.
+
+#### `is_controller_connected`
+
+```cpp
+bool is_controller_connected(uint32_t index);
+```
+
+Returns `true` if a controller is connected at the index.
 
 #### `get_controller_name`
 
@@ -269,6 +286,40 @@ std::string get_controller_name(uint32_t index);
 ```
 
 Get the name of a controller.
+
+### Rumble
+
+#### `rumble_controller`
+
+```cpp
+bool rumble_controller(uint32_t index, float low_frequency, float high_frequency,
+                       uint32_t duration_ms);
+```
+
+Rumble the main motors of a controller. `low_frequency` is the left motor and `high_frequency` is the right motor, each from `0.0f` to `1.0f`. Each call replaces the last rumble on that controller. Call with both values at `0` to stop early. Pass `ANY_CONTROLLER` to rumble all connected controllers. Returns `true` if at least one controller started to rumble.
+
+#### `rumble_controller_triggers`
+
+```cpp
+bool rumble_controller_triggers(uint32_t index, float left, float right, uint32_t duration_ms);
+```
+
+Rumble the trigger motors of a controller, from `0.0f` to `1.0f`. Only some controllers have trigger motors, for example Xbox One and Xbox Series controllers. Works the same as `rumble_controller()`.
+
+#### `controller_has_rumble` / `controller_has_trigger_rumble`
+
+```cpp
+bool controller_has_rumble(uint32_t index);
+bool controller_has_trigger_rumble(uint32_t index);
+```
+
+Returns `true` if the controller supports rumble or trigger rumble. With `ANY_CONTROLLER`, returns `true` if any connected controller does.
+
+```cpp
+if (player_hit) {
+  asw::input::rumble_controller(asw::input::ANY_CONTROLLER, 0.8f, 0.4f, 200);
+}
+```
 
 ## Constants
 
